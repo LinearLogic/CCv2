@@ -19,7 +19,7 @@ import fostering.evil.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.0.3
+ * @version 0.0.4
  */
 public class ChristmasCrashers {
 	
@@ -34,7 +34,6 @@ public class ChristmasCrashers {
 	 */
 	private static StateType state;
 	
-	// States could also be handled with a superclass system, but I like variety
 	/**
 	 * IntroState object, initialized in the {@link #loadStates()} method.
 	 */
@@ -119,7 +118,6 @@ public class ChristmasCrashers {
 		glLoadIdentity();
 		glOrtho(0, 640, 0, 480, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
-		glEnable(GL_TEXTURE_2D);
 		
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
