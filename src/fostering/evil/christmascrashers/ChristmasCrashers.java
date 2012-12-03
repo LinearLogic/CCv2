@@ -2,6 +2,8 @@ package fostering.evil.christmascrashers;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.util.Scanner;
+
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
@@ -17,9 +19,14 @@ import fostering.evil.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.0.2
+ * @version 0.0.3
  */
 public class ChristmasCrashers {
+	
+	/**
+	 * Indicates whether the program is running in debug mode
+	 */
+	private static boolean debugModeEnabled;
 	
 	/**
 	 * Current game state flag - determines which state is handled in the input/logic/rendering loop.
@@ -61,7 +68,8 @@ public class ChristmasCrashers {
 	 * @param height The height of the game window
 	 */
 	public ChristmasCrashers(int width, int height) {
-		// TODO: if debug System.out.println("Constructing the game object. Window dimensions: " + width + "x" + height + " pixels."
+		if (debugModeEnabled)
+			System.out.println("Constructing the game object. Window dimensions: " + width + "x" + height + " pixels.");
 		initDisplay(width, height);
 		initOpenGL(width, height);
 		state = StateType.INTRO;
@@ -93,6 +101,7 @@ public class ChristmasCrashers {
 		try {
 			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.setTitle("ChristmasCrashers");
+			Display.setVSyncEnabled(true); // Framerate cannot exceed the computer monitor's refresh rate (prevents image tearing)
 			Display.create();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -111,6 +120,14 @@ public class ChristmasCrashers {
 		glOrtho(0, 640, 0, 480, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		glEnable(GL_TEXTURE_2D);
+		
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		
+		glDisable(GL_DEPTH_TEST);
+		glShadeModel(GL_SMOOTH);
+		
+		glClearDepth(1);
 	}
 	
 	private void loadStates() {
@@ -174,19 +191,43 @@ public class ChristmasCrashers {
 	}
 	
 	/**
+	 * @return The value of the {@link #debugModeEnabled} flag, which is 'true' iff debug mode is enabled
+	 */
+	public static boolean isDebugModeEnabled() {
+		return debugModeEnabled;
+	}
+	
+	/**
 	 * Sets the value of {@link #state} to 'false', causing the program to exit the game loop.
 	 */
 	public static void exitGameLoop() {
-		// TODO: if debug System.out.println("Received quit command, exiting game loop...);
+		if (debugModeEnabled)
+			System.out.println("Received quit command, exiting game loop.");
 		running = false;
 	}
 	
 	/**
-	 * Program entry point, creates a game object
+	 * Program entry point, creates a game object after determining whether to run the program in debug mode.
 	 * 
 	 * @param args ...
 	 */
 	public static void main(String[] args) {
+		System.out.println("Welcome to ChristmasCrashers! Run in DEBUG mode? (Y/N)");
+		Scanner sc = new Scanner(System.in);
+		while(true) {
+			String response = sc.nextLine();
+			if (response.equalsIgnoreCase("y") || response.equalsIgnoreCase("yes")) {
+				debugModeEnabled = true;
+				break;
+			}
+			else if (response.equalsIgnoreCase("n") || response.equalsIgnoreCase("no")) {
+				debugModeEnabled = false;
+				break;
+			}
+			else
+				System.out.println("Invalid answer, please type 'Y' or 'N'");
+		}
+		sc.close();
 		new ChristmasCrashers(640, 480);
 	}
 }

@@ -2,6 +2,8 @@ package fostering.evil.christmascrashers.state;
 
 import org.lwjgl.input.Keyboard;
 
+import fostering.evil.christmascrashers.ChristmasCrashers;
+
 /**
  * The introduction state is entered first. While active, it runs the loading animation, and then prompts
  * user to press 'Enter' to begin. The player can skip the intro at any point by pressing the 'escape' key.
@@ -41,14 +43,16 @@ public class IntroState extends State {
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !keyDown) {
 			MainMenuState.setKeyDown(true); // Prevents repeat key events after switching the active state
 			reset();
-			// TODO: if debug System.out.println("Switching to MainMenu state");
+			if (ChristmasCrashers.isDebugModeEnabled())
+				System.out.println("Switching to MainMenu state.");
 			// Cancel animation
 			return StateType.MAIN_MENU;
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN) && (animationStatus == 2) && !keyDown) { // Animation is complete
 			MainMenuState.setKeyDown(true);
 			reset();
-			// TODO: if debug System.out.println("Switching to MainMenu state");
+			if (ChristmasCrashers.isDebugModeEnabled())
+				System.out.println("Switching to MainMenu state.");
 			return StateType.MAIN_MENU;
 		}
 		return StateType.INTRO;
