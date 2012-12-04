@@ -19,7 +19,7 @@ import fostering.evil.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.0.4
+ * @version 0.0.5
  */
 public class ChristmasCrashers {
 	
@@ -27,6 +27,16 @@ public class ChristmasCrashers {
 	 * Indicates whether the program is running in debug mode
 	 */
 	private static boolean debugModeEnabled;
+	
+	/**
+	 * Width of the game window in pixels
+	 */
+	private static int windowWidth;
+	
+	/**
+	 * Height of the game window, in pixels
+	 */
+	private static int windowHeight;
 	
 	/**
 	 * Current game state flag - determines which state is handled in the input/logic/rendering loop.
@@ -58,7 +68,7 @@ public class ChristmasCrashers {
 	/**
 	 * The system time (retrieved using {@link #getTime()}) at which the most recent frame was rendered.
 	 */
-	private long lastFrame;
+	private static long lastFrame;
 	
 	/**
 	 * Game object constructor - initializes openGL, starts the timer, and runs the game logic and rendering loop.
@@ -67,18 +77,22 @@ public class ChristmasCrashers {
 	 * @param height The height of the game window
 	 */
 	public ChristmasCrashers(int width, int height) {
+		windowWidth = width;
+		windowHeight = height;
 		if (debugModeEnabled)
 			System.out.println("Constructing the game object. Window dimensions: " + width + "x" + height + " pixels.");
-		initDisplay(width, height);
-		initOpenGL(width, height);
+		initDisplay(windowWidth, windowHeight);
+		initOpenGL(windowWidth, windowHeight);
 		state = StateType.INTRO;
 		loadStates();
 		initTimer();
 		running = true;
+		IntroState.initialize();
 		
 		// Logic/rendering loop
 		while(running) {
-			
+			glClear(GL_COLOR_BUFFER_BIT);
+
 			handleState(); // This includes input handling, logic execution, and rendering
 			
 			Display.update();
@@ -110,13 +124,13 @@ public class ChristmasCrashers {
 	/**
 	 * Initializes openGL for 2D graphics with the given pixel glOrtho(...) width and height
 	 * 
-	 * @param width The pixel width to be passed to the glOrtho(...) method
+	 * @param width The pixel width to be passed to the glOtho(...) method
 	 * @param height The pixel height to be passed to the glOrtho(...) method
 	 */
 	private void initOpenGL(int width, int height) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, 640, 0, 480, 1, -1);
+		glOrtho(0, width, 0, height, 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glEnable(GL_BLEND);
@@ -128,6 +142,9 @@ public class ChristmasCrashers {
 		glClearDepth(1);
 	}
 	
+	/**
+	 * Constructs a State subclass object for each state type.
+	 */
 	private void loadStates() {
 		introState = new IntroState();
 		mainMenuState = new MainMenuState();
@@ -148,15 +165,21 @@ public class ChristmasCrashers {
 		switch(state) {
 			case INTRO:
 				state = introState.handleInput();
+				introState.logic();
+				introState.draw();
 				break;
 			case MAIN_MENU:
 				state = mainMenuState.handleInput();
+				mainMenuState.logic();
+				mainMenuState.draw();
 				break;
 			case GAME:
 				state = gameState.handleInput();
+				gameState.logic();
+				gameState.draw();
 				break;
 			case WINDOW:
-				//state = WindowManager.handleInput();
+				// This guy's a bit more complex...
 				break;
 		}
 	}
@@ -174,7 +197,7 @@ public class ChristmasCrashers {
 	 * 
 	 * @return The integer time between frames
 	 */
-	public int getDelta() {
+	public static int getDelta() {
 		long currentTime = getTime();
 		int delta = (int) (currentTime - lastFrame);
 		lastFrame = getTime();
@@ -188,6 +211,19 @@ public class ChristmasCrashers {
 		return state;
 	}
 	
+	/**
+	 * @return The {@link #windowWidth width} of the game window
+	 */
+	public static int getWindowWidth() {
+		return windowWidth;
+	}
+	
+	/**
+	 * @return The {@link #windowHeight height} of the game window
+	 */
+	public static int getWindowHeight() {
+		return windowHeight;
+	}
 	/**
 	 * @return The value of the {@link #debugModeEnabled} flag, which is 'true' iff debug mode is enabled
 	 */
@@ -226,6 +262,6 @@ public class ChristmasCrashers {
 				System.out.println("Invalid answer, please type 'Y' or 'N'");
 		}
 		sc.close();
-		new ChristmasCrashers(640, 480);
+		new ChristmasCrashers(800, 480);
 	}
 }

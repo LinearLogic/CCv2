@@ -65,10 +65,10 @@ public class RenderMonkey {
 		glColor4d(r, g, b, transparency);
 		
 		glBegin(GL_LINE_LOOP);
+			glVertex2d(x, y + h);
 			glVertex2d(x, y);
 			glVertex2d(x + w, y);
 			glVertex2d(x + w, y + h);
-			glVertex2d(x, y + h);
 		glEnd();
 		
 		glEnable(GL_TEXTURE_2D);
@@ -105,10 +105,10 @@ public class RenderMonkey {
 		glColor4d(r, g, b, transparency);
 		
 		glBegin(GL_TRIANGLE_FAN);
+			glVertex2d(x, y + h);
 			glVertex2d(x, y);
 			glVertex2d(x + w, y);
 			glVertex2d(x + w, y + h);
-			glVertex2d(x, y + h);
 		glEnd();
 		
 		glEnable(GL_TEXTURE_2D);
@@ -176,20 +176,21 @@ public class RenderMonkey {
 	 */
 	public static void renderTransparentTexturedRectangle(double x, double y, double w, double h, Texture texture, double texX, double texY, double texW, double texH, double transparency) {
 		glEnable(GL_TEXTURE_2D);
-		
 		glColor4d(1.0, 1.0, 1.0, transparency);
-		
 		glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
 		
-		glBegin(GL_TRIANGLE_STRIP);
+		glBegin(GL_TRIANGLE_FAN);
 			glTexCoord2d(texX, texY);
-			glVertex2d(x, y);
-			glTexCoord2d(texX + texW, texY);
-			glVertex2d(x + w, y);
+			glVertex2d(x, y + h); // Bottom left
+			
 			glTexCoord2d(texX, texY + texH);
-			glVertex2d(x, y + h);
+			glVertex2d(x, y); // Top left
+			
 			glTexCoord2d(texX + texW, texY + texH);
-			glVertex2d(x + w, y + h);
+			glVertex2d(x + w, y); // Top right
+			
+			glTexCoord2d(texX + texW, texY);
+			glVertex2d(x + w, y + h); // Bottom right
 		glEnd();
 		
 		glDisable(GL_TEXTURE_2D);

@@ -1,8 +1,18 @@
 package fostering.evil.christmascrashers.state;
 
+//import static org.lwjgl.opengl.GL11.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.lwjgl.input.Keyboard;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 import fostering.evil.christmascrashers.ChristmasCrashers;
+import fostering.evil.christmascrashers.engine.RenderMonkey;
 
 /**
  * The introduction state is entered first. While active, it runs the loading animation, and then prompts
@@ -14,43 +24,71 @@ import fostering.evil.christmascrashers.ChristmasCrashers;
 public class IntroState extends State {
 
 	/**
-	 * Represents the status of the intro animation sequence: 0 if not started, 1 if in progress, 2 if complete.
+	 * Contains the textures used in the loading screen animation
 	 */
-	private int animationStatus;
+	private HashMap<Integer, Texture> textures = new HashMap<Integer, Texture>();
+	
+	/**
+	 * Holds the current state of the loading animation.
+	 */
+	private static boolean animationComplete;
+	
+	/**
+	 * Rate at which the "loading..." text in the splash fades in and out, in milliseconds per cycle.
+	 */
+	private int fadeFrequency;
+	
+	/**
+	 * The fade value in the current frame (determines the {@link #transparencyLevel} of the "loading..." text
+	 * using a cosine function with {@link #fadeFrequency} as a parameter).
+	 */
+	private double fadeValue;
+	
+	/**
+	 * The transparency level for the rectangle that fades the "loading..." text in and out.
+	 */
+	private double transparencyLevel;
 	
 	/**
 	 * Represents the state of the game worlds: 'true' if they have all been loaded, otherwise 'false'.
 	 * If this value is true, the world-loader thread will not be called in the {@link #initialize()} method.
 	 */
-	boolean worldsLoaded;
+	static boolean worldsLoaded;
 	
 	/**
-	 * Constructor - initializes the {@link #finishedLoading} and {@link State#keyDown} values to 'false',
+	 * Constructor - loads intro textures, sets the {@link #fadeFrequency}, initializes the {@link #finishedLoading} and {@link State#keyDown} values to 'false',
 	 * and populates the {@link State#importantKeys} ArrayList. Note that the splash animation and
 	 * game-loader thread are not started here, but in the {@link #initialize()} method.
 	 */
 	public IntroState() {
+		if (ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("Loading textures for the Intro state.");
+		try {
+			textures.put(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("files" + File.separator + "CCIntroBanner.PNG")));
+			textures.put(1, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("files" + File.separator + "CCIntroLoading.PNG")));
+			textures.put(2, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("files" + File.separator + "CCIntroComplete.PNG")));
+		} catch (IOException e) {
+			System.err.println("Failed to load texture(s) for the Intro state!");
+			e.printStackTrace();
+		}
+		if (ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("Initializing Intro state variables.");
+		fadeFrequency = 1200; // One second per fade cycle
+		fadeValue = 0;
+		transparencyLevel = 1.0;
 		keyDown = false;
-		addImportantKey(Keyboard.KEY_ESCAPE);
 		addImportantKey(Keyboard.KEY_RETURN);
-		animationStatus = 0;
+		animationComplete = false;
 		worldsLoaded = false; // TODO: change this value to the worldsLoaded value in the world manager class
 	}
-	
+
 	@Override
 	public StateType handleInput() {
 		checkKeyStates();
-		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !keyDown) {
-			MainMenuState.setKeyDown(true); // Prevents repeat key events after switching the active state
-			reset();
-			if (ChristmasCrashers.isDebugModeEnabled())
-				System.out.println("Switching to MainMenu state.");
-			// Cancel animation
-			return StateType.MAIN_MENU;
-		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN) && (animationStatus == 2) && !keyDown) { // Animation is complete
+		if (Keyboard.isKeyDown(Keyboard.KEY_A))
+			animationComplete = true;
+		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN) && animationComplete && !keyDown) { // Animation is complete
 			MainMenuState.setKeyDown(true);
-			reset();
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("Switching to MainMenu state.");
 			return StateType.MAIN_MENU;
@@ -60,31 +98,28 @@ public class IntroState extends State {
 
 	@Override
 	public void logic() {
-		
+		transparencyLevel = (0.5 * Math.cos(fadeValue)) + 0.5;
+		fadeValue = (fadeValue + 2.0 * Math.PI * ((double) ChristmasCrashers.getDelta() / fadeFrequency)) % (2 * Math.PI);
 	}
 
 	@Override
 	public void draw() {
-		
+		RenderMonkey.renderColoredRectangle(0.0, 0.0, ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight(), 1.0, 1.0, 1.0); // Render a white background
+		RenderMonkey.renderTexturedRectangle(0.0, ChristmasCrashers.getWindowHeight() / 2 - 40, textures.get(0).getTextureWidth(), textures.get(0).getTextureHeight(), textures.get(0)); // Render the ChristmasCrashers banner
+		if (!animationComplete) {
+			RenderMonkey.renderTransparentTexturedRectangle(0.0, ChristmasCrashers.getWindowHeight() / 2 - textures.get(1).getTextureHeight(), textures.get(1).getTextureWidth(), textures.get(1).getTextureHeight(), textures.get(1), transparencyLevel); // Render the appropriately-faded loading banner
+		} else {
+			RenderMonkey.renderTexturedRectangle(0.0, ChristmasCrashers.getWindowHeight() / 2 - textures.get(2).getTextureHeight(), textures.get(2).getTextureWidth(), textures.get(2).getTextureHeight(), textures.get(2)); // Render the appropriately-faded loading banner
+		}
 	}
 	
 	/**
 	 * Begins the loading animation and executes the game-loader thread.
 	 */
-	public void initialize() {
-		if (animationStatus != 0) // Not sure how this would happen, but just to make sure...
-			animationStatus = 0;
+	public static void initialize() {
+		animationComplete = false;
 		if (!worldsLoaded) {
 			// load worlds here
 		}
-	}
-	
-	/**
-	 * Resets the Intro state so that it can be played through again.
-	 */
-	private void reset() {
-		//worldsLoaded = getWorldsLoadedFromWorldManager
-		//TODO: reset animation
-		animationStatus = 0;
 	}
 }

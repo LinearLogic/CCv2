@@ -42,4 +42,11 @@ public class MainMenuState extends State {
 	public void draw() {
 
 	}
+	
+	/**
+	 * Begins the main menu starfield animation.
+	 */
+	public static void initialize() {
+		// Animation
+	}
 }
