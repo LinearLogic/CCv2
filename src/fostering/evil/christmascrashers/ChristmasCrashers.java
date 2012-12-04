@@ -16,13 +16,11 @@ import fostering.evil.christmascrashers.state.MainMenuState;
 import fostering.evil.christmascrashers.state.State;
 import fostering.evil.christmascrashers.state.StateType;
 
-
-
 /**
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.0.6
+ * @version 0.1.1
  */
 public class ChristmasCrashers {
 	

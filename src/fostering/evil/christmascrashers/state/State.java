@@ -22,7 +22,8 @@ public abstract class State implements StateInterface{
 	
 	/**
 	 * Represents the collective status of all {@link #importantKeys}. Only if its value is 'true' will new
-	 * keyboard input be handled.
+	 * keyboard input be handled. In the case of the {@link MainMenuState}, the left mouse button also
+	 * affects the status of the keyDown flag.
 	 */
 	protected static boolean keyDown;
 	

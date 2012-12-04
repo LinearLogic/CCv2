@@ -14,7 +14,6 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glShadeModel;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
 import fostering.evil.christmascrashers.ChristmasCrashers;
@@ -69,7 +68,6 @@ public class GLGuru {
 	 */
 	public static void initGL3D(int width, int height) {
 		glMatrixMode(GL_PROJECTION);
-		glPushMatrix();
 		glLoadIdentity();
 		gluPerspective((float) 30, width / height, 0.001f, 300);
         glMatrixMode(GL_MODELVIEW);
