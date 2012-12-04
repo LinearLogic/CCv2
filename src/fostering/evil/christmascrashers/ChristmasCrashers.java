@@ -9,17 +9,20 @@ import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
+import fostering.evil.christmascrashers.engine.GLGuru;
 import fostering.evil.christmascrashers.state.GameState;
 import fostering.evil.christmascrashers.state.IntroState;
 import fostering.evil.christmascrashers.state.MainMenuState;
 import fostering.evil.christmascrashers.state.State;
 import fostering.evil.christmascrashers.state.StateType;
 
+
+
 /**
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.0.5
+ * @version 0.0.6
  */
 public class ChristmasCrashers {
 	
@@ -82,7 +85,7 @@ public class ChristmasCrashers {
 		if (debugModeEnabled)
 			System.out.println("Constructing the game object. Window dimensions: " + width + "x" + height + " pixels.");
 		initDisplay(windowWidth, windowHeight);
-		initOpenGL(windowWidth, windowHeight);
+		GLGuru.initGL2D(windowWidth, windowHeight);
 		state = StateType.INTRO;
 		loadStates();
 		initTimer();
@@ -91,8 +94,8 @@ public class ChristmasCrashers {
 		
 		// Logic/rendering loop
 		while(running) {
-			glClear(GL_COLOR_BUFFER_BIT);
-
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			
 			handleState(); // This includes input handling, logic execution, and rendering
 			
 			Display.update();
@@ -121,26 +124,6 @@ public class ChristmasCrashers {
 		}
 	}
 	
-	/**
-	 * Initializes openGL for 2D graphics with the given pixel glOrtho(...) width and height
-	 * 
-	 * @param width The pixel width to be passed to the glOtho(...) method
-	 * @param height The pixel height to be passed to the glOrtho(...) method
-	 */
-	private void initOpenGL(int width, int height) {
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		glOrtho(0, width, 0, height, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
-		
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
-		glDisable(GL_DEPTH_TEST);
-		glShadeModel(GL_SMOOTH);
-		
-		glClearDepth(1);
-	}
 	
 	/**
 	 * Constructs a State subclass object for each state type.

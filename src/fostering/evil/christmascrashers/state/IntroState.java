@@ -14,6 +14,8 @@ import org.newdawn.slick.util.ResourceLoader;
 import fostering.evil.christmascrashers.ChristmasCrashers;
 import fostering.evil.christmascrashers.engine.RenderMonkey;
 
+
+
 /**
  * The introduction state is entered first. While active, it runs the loading animation, and then prompts
  * user to press 'Enter' to begin. The player can skip the intro at any point by pressing the 'escape' key.
@@ -85,12 +87,13 @@ public class IntroState extends State {
 	@Override
 	public StateType handleInput() {
 		checkKeyStates();
-		if (Keyboard.isKeyDown(Keyboard.KEY_A))
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !animationComplete)
 			animationComplete = true;
 		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN) && animationComplete && !keyDown) { // Animation is complete
 			MainMenuState.setKeyDown(true);
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("Switching to MainMenu state.");
+			MainMenuState.initialize();
 			return StateType.MAIN_MENU;
 		}
 		return StateType.INTRO;
@@ -117,6 +120,8 @@ public class IntroState extends State {
 	 * Begins the loading animation and executes the game-loader thread.
 	 */
 	public static void initialize() {
+		if (ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("Initializing Intro state.");
 		animationComplete = false;
 		if (!worldsLoaded) {
 			// load worlds here

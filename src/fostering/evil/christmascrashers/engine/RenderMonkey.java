@@ -12,7 +12,7 @@ import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.util.ResourceLoader;
 
 /**
- * Gateway to OpenGL - the RenderMonkey provides various rendering utilities if you feed him enough bananas.
+ * The RenderMonkey provides various rendering utilities/shortcuts if you feed him enough bananas.
  * 
  * @author LinearLogic
  * @since 0.0.4
