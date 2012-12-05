@@ -29,7 +29,7 @@ public class MainMenuState extends State {
 	/**
 	 * Contains the textures used for the game option/navigation buttons.
 	 */
-	private HashMap<Integer, Texture> textures = new HashMap<Integer, Texture>();
+	private static HashMap<Integer, Texture> textures = new HashMap<Integer, Texture>();
 	
 	/**
 	 * The speed at which the camera zooms in on the starfield.
@@ -56,6 +56,12 @@ public class MainMenuState extends State {
 	 * The current progress through the fade-in animation (this value starts at 0 and increments until it reaches 1000).
 	 */
 	private static double animationProgress;
+	
+	/**
+	 * The {@link NavigationButton} currently selected by the mouse (NONE if the mouse isn't hovering over one of
+	 * the navigation buttons)
+	 */
+	private NavigationButton selectedButton;
 
 	/**
 	 * Constructor - initializes the keyDown value to false and populates the importantKeys ArrayList
@@ -72,9 +78,7 @@ public class MainMenuState extends State {
 			System.err.println("Failed to load texture(s) for the MainMenu state!");
 			e.printStackTrace();
 		}
-		if (ChristmasCrashers.isDebugModeEnabled())
-			System.out.println("Loading navigation button locations and dimensions.");
-		
+		selectedButton = NavigationButton.NONE;
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing MainMenu state variables.");
 		keyDown = false;
@@ -82,6 +86,7 @@ public class MainMenuState extends State {
 		zoomDistance = 0f;
 		animationSpeed = 8000;
 		animationProgress = 1000;
+		selectedButton = NavigationButton.NONE;
 		addImportantKey(Keyboard.KEY_ESCAPE);
 	}
 
@@ -93,9 +98,34 @@ public class MainMenuState extends State {
 			// Open quitgame prompt window?
 			ChristmasCrashers.exitGameLoop();
 		}
-		if (Mouse.isButtonDown(0)) {
+		// Determine the currently selected navigation button
+		int x = Mouse.getX();
+		int y = Mouse.getY();
+		if (NavigationButton.START_GAME.isSelected(x, y))
+			selectedButton = NavigationButton.START_GAME;
+		else if (NavigationButton.LEVEL_EDITOR.isSelected(x, y))
+			selectedButton = NavigationButton.LEVEL_EDITOR;
+		else if (NavigationButton.EXIT.isSelected(x, y))
+			selectedButton = NavigationButton.EXIT;
+		else
+			selectedButton = NavigationButton.NONE;
+		
+		if (Mouse.isButtonDown(0) && !keyDown && (animationProgress >= 1000)) {// Left click
 			keyDown = true;
-			// TODO: add mouse location checks and handle clicks on in-game options (start game, exit, etc.)
+			switch(selectedButton) {
+				case START_GAME:
+					// start the game, dummy!
+					break;
+				case LEVEL_EDITOR:
+					System.out.println("COMING SOON!");
+					break;
+				case EXIT:
+					ChristmasCrashers.exitGameLoop();
+					break;
+				case NONE:
+				default:
+					break;
+			}
 		}
 		return StateType.MAIN_MENU;
 	}
@@ -144,30 +174,34 @@ public class MainMenuState extends State {
 					double transparency = (animationProgress - 600) / 300;
 					if (transparency > 1)
 						transparency = 1;
-					Texture tex = textures.get(2);
-					RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 170, 140 + 2 * (tex.getTextureHeight() + 20), 180, 50, tex, Math.pow(transparency, 2));
+					RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.START_GAME.x, NavigationButton.START_GAME.y, NavigationButton.START_GAME.width, NavigationButton.START_GAME.height, NavigationButton.START_GAME.texture, Math.pow(transparency, 2));
 					// Level Editor button (fades in second)
 					transparency = (animationProgress - 650) / 300;
 					if (transparency < 0)
 						transparency = 0;
 					if (transparency > 1)
 						transparency = 1;
-					tex = textures.get(1);
-					RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 90, 140 + tex.getTextureHeight() + 20, 180, 50, tex, Math.pow(transparency, 2));
+					RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.LEVEL_EDITOR.x, NavigationButton.LEVEL_EDITOR.y, NavigationButton.LEVEL_EDITOR.width, NavigationButton.LEVEL_EDITOR.height, NavigationButton.LEVEL_EDITOR.texture, Math.pow(transparency, 2));
 					// Exit button (fades in last)
 					transparency = (animationProgress - 700) / 300;
 					if (transparency < 0)
 						transparency = 0;
-					tex = textures.get(0);
-					RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 10, 140, 180, 50, tex, Math.pow(transparency, 2));
+					RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.EXIT.x, NavigationButton.EXIT.y, NavigationButton.EXIT.width, NavigationButton.EXIT.height, NavigationButton.EXIT.texture, Math.pow(transparency, 2));
 				}
 				animationProgress += (double) ChristmasCrashers.getDelta() * 1000 / animationSpeed;
 				if (animationProgress > 1000) // Prevent overshooting the animationProgress limit
 					animationProgress = 1000;
 			} else { // Load fully opaque option buttons
-				RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 170, 140 + 2 * (textures.get(2).getTextureHeight() + 20), 180, 50, textures.get(2), 1.0);
-				RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 90, 140 + textures.get(1).getTextureHeight() + 20, 180, 50, textures.get(1), 1.0);
-				RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 10, 140, 180, 50, textures.get(0), 1.0);
+				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.START_GAME.x, NavigationButton.START_GAME.y, NavigationButton.START_GAME.width, NavigationButton.START_GAME.height, NavigationButton.START_GAME.texture, 1.0);
+				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.LEVEL_EDITOR.x, NavigationButton.LEVEL_EDITOR.y, NavigationButton.LEVEL_EDITOR.width, NavigationButton.LEVEL_EDITOR.height, NavigationButton.LEVEL_EDITOR.texture, 1.0);
+				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.EXIT.x, NavigationButton.EXIT.y, NavigationButton.EXIT.width, NavigationButton.EXIT.height, NavigationButton.EXIT.texture, 1.0);
+				// Highlight the selected NavigationButton (if any)
+				if (selectedButton != NavigationButton.NONE) {
+					RenderMonkey.renderLinedRectangle(selectedButton.x, selectedButton.y, selectedButton.width, selectedButton.height, 0.3, 0.3, 1.0);
+					RenderMonkey.renderLinedRectangle(selectedButton.x - 1, selectedButton.y - 1, selectedButton.width + 2, selectedButton.height + 2, 0.3, 0.3, 1.0);
+					RenderMonkey.renderLinedRectangle(selectedButton.x - 2, selectedButton.y - 2, selectedButton.width + 4, selectedButton.height + 4, 0.3, 0.3, 1.0);
+					RenderMonkey.renderLinedRectangle(selectedButton.x - 3, selectedButton.y - 3, selectedButton.width + 6, selectedButton.height + 6, 0.3, 0.3, 1.0);
+				}
 			}
 		}
 	}
@@ -232,4 +266,74 @@ public class MainMenuState extends State {
             this.z = z;
         }
     }
+	
+	/**
+	 * Enum containing all the navigation buttons that can be selected via mouse and, for each button, the dimensional
+	 * attributes and Texture object used to render the button.
+	 * 
+	 * @author LinearLogic
+	 * @since 0.1.3
+	 */
+	private enum NavigationButton {
+		START_GAME(ChristmasCrashers.getWindowWidth() / 2 - 170, ChristmasCrashers.getWindowHeight() / 2 + 45, 180, 50, textures.get(2)),
+		LEVEL_EDITOR(ChristmasCrashers.getWindowWidth() / 2 - 90, ChristmasCrashers.getWindowHeight() / 2 - 25, 180, 50, textures.get(1)),
+		EXIT(ChristmasCrashers.getWindowWidth() / 2 - 10, ChristmasCrashers.getWindowHeight() / 2 - 95, 180, 50, textures.get(0)),
+		NONE(0, 0, 0, 0, null);
+		
+		/**
+		 * The pixel x-coordinate of the bottom left corner of the button within the game window
+		 */
+		private final double x;
+		
+		/**
+		 * The pixel y-coordinate of the bottom left corner of the button within the game window
+		 */
+		private final double y;
+		
+		/**
+		 * The width, in pixels, of the button (does not have to be the width of the Texture used for the button)
+		 */
+		private final double width;
+		
+		/**
+		 * The height, in pixels, of the button (does not have to be the height of the Texture used for the button)
+		 */
+		private final double height;
+		
+		/**
+		 * The Texture object that contains the image displayed on the button
+		 */
+		private final Texture texture;
+		
+		/**
+		 * Constructor - sets the button's dimensional attributes and Texture to the supplied values and Texture object.
+		 * 
+		 * @param x The pixel {@link #x}-coordinate of the button
+		 * @param y The pixel {@link #y}-coordinate of the button
+		 * @param width The {@link #width}, in pixels, of the button
+		 * @param height The {@link #height}, in pixels, of the button
+		 * @param texture The {@link #texture} of the button
+		 */
+		private NavigationButton(double x, double y, double width, double height, Texture texture) {
+			this.x = x;
+			this.y = y;
+			this.width = width;
+			this.height = height;
+			this.texture = texture;
+		}
+		
+		/**
+		 * Returns true iff the point defined by the provided coordinates falls within the bounds of the button rectangle.
+		 * 
+		 * @param x The pixel x-coordinate (within the game window) of the point to be checked
+		 * @param y The pixel y-coordinate (within the game window) of the point to be checked
+		 * @return Whether the provided point is within the button rectangle
+		 */
+		private boolean isSelected(int x, int y) {
+			if (y > this.y && y < this.y + height)
+				if (x > this.x && x < this.x + width)
+					return true;
+			return false;
+		}
+	}
 }

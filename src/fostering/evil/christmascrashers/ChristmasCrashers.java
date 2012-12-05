@@ -20,7 +20,7 @@ import fostering.evil.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.1.2
+ * @version 0.1.3
  */
 public class ChristmasCrashers {
 	
