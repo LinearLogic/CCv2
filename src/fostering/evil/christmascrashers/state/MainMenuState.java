@@ -9,6 +9,8 @@ import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -62,6 +64,11 @@ public class MainMenuState extends State {
 	 * the navigation buttons)
 	 */
 	private NavigationButton selectedButton;
+	
+	/**
+	 * The font used in the MainMenu screen (for the version, etc.)
+	 */
+	private TrueTypeFont font;
 
 	/**
 	 * Constructor - initializes the keyDown value to false and populates the importantKeys ArrayList
@@ -69,7 +76,7 @@ public class MainMenuState extends State {
 	 */
 	public MainMenuState() {
 		if (ChristmasCrashers.isDebugModeEnabled())
-			System.out.println("Loading textures for the Intro state.");
+			System.out.println("Loading textures for the MainMenu state.");
 		try {
 			textures.put(2, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("files" + File.separator + "CCStartGameButton.PNG")));
 			textures.put(1, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("files" + File.separator + "CCLevelEditorButton.PNG")));
@@ -80,6 +87,9 @@ public class MainMenuState extends State {
 		}
 		selectedButton = NavigationButton.NONE;
 		if (ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("Loading fonts for the MainMenu state.");
+		font = RenderMonkey.loadFont("files" + File.separator + "FIXEDSYS500C.TTF", 30);
+		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing MainMenu state variables.");
 		keyDown = false;
 		zoomSpeed = 1.1f;
@@ -87,17 +97,11 @@ public class MainMenuState extends State {
 		animationSpeed = 8000;
 		animationProgress = 1000;
 		selectedButton = NavigationButton.NONE;
-		addImportantKey(Keyboard.KEY_ESCAPE);
 	}
 
 	@Override
 	public StateType handleInput() {
 		checkKeyStates();
-		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !keyDown) {
-			keyDown = true;
-			// Open quitgame prompt window?
-			ChristmasCrashers.exitGameLoop();
-		}
 		// Determine the currently selected navigation button
 		int x = Mouse.getX();
 		int y = Mouse.getY();
@@ -137,7 +141,7 @@ public class MainMenuState extends State {
 
 	@Override
 	public void draw() {
-		if (points[0] != null) {
+		if (points[0] != null) { // Only render things if the starfield animation has been initialized
 			// Switch into 3D mode (gluPerspective)
 			GLGuru.initGL3D();
 			glColor3d(1, 1, 1);
@@ -152,7 +156,7 @@ public class MainMenuState extends State {
 	        		glVertex3f(p.x, p.y, p.z);
 	        	}
 	        glEnd();
-
+	        
 	        // Switch back to 2D mode using a glOrtho call adjusted based on the current zoomDistance
 	        glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
@@ -192,6 +196,27 @@ public class MainMenuState extends State {
 				if (animationProgress > 1000) // Prevent overshooting the animationProgress limit
 					animationProgress = 1000;
 			} else { // Load fully opaque option buttons
+				// Behold a rather kludgy rendering block, all for the sake of the version string...
+				glMatrixMode(GL_PROJECTION);
+				glLoadIdentity();
+				glOrtho(0, ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight(), 0, -zoomDistance + 1, -zoomDistance - 1);
+				glMatrixMode(GL_MODELVIEW);
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glDisable(GL_DEPTH_TEST);
+				glShadeModel(GL_SMOOTH);
+				glClearDepth(1);
+				RenderMonkey.renderString("v" + ChristmasCrashers.VERSION, 30, ChristmasCrashers.getWindowHeight() - 50, font, Color.lightGray);
+				glMatrixMode(GL_PROJECTION);
+				glLoadIdentity();
+				glOrtho(0, ChristmasCrashers.getWindowWidth(), 0, ChristmasCrashers.getWindowHeight(), -zoomDistance + 1, -zoomDistance - 1);
+				glMatrixMode(GL_MODELVIEW);
+				glEnable(GL_BLEND);
+				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+				glDisable(GL_DEPTH_TEST);
+				glShadeModel(GL_SMOOTH);
+				glClearDepth(1);
+
 				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.START_GAME.x, NavigationButton.START_GAME.y, NavigationButton.START_GAME.width, NavigationButton.START_GAME.height, NavigationButton.START_GAME.texture, 1.0);
 				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.LEVEL_EDITOR.x, NavigationButton.LEVEL_EDITOR.y, NavigationButton.LEVEL_EDITOR.width, NavigationButton.LEVEL_EDITOR.height, NavigationButton.LEVEL_EDITOR.texture, 1.0);
 				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.EXIT.x, NavigationButton.EXIT.y, NavigationButton.EXIT.width, NavigationButton.EXIT.height, NavigationButton.EXIT.texture, 1.0);

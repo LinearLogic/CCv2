@@ -3,7 +3,9 @@ package fostering.evil.christmascrashers.engine;
 import static org.lwjgl.opengl.GL11.*;
 
 import java.awt.Font;
-import java.io.InputStream;
+import java.awt.FontFormatException;
+import java.io.BufferedInputStream;
+import java.io.IOException;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.TrueTypeFont;
@@ -218,7 +220,7 @@ public class RenderMonkey {
 	}
 	
 	/**
-	 * Renders a string in black.
+	 * Renders a string in white.
 	 * 
 	 * @param string The contents of the string
 	 * @param x X-coordinate of the top lefthand corner of the string (pixel location within the rendering window)
@@ -244,37 +246,22 @@ public class RenderMonkey {
 	}
 	
 	/**
-	 * Loads a TrueType system font with provided font type and size.
-	 * 
-	 * @param systemFont
-	 * @param fontSize
-	 * @return The TrueTypeFont loaded
-	 */
-	public static TrueTypeFont loadSystemFont(String systemFont, int fontSize) {
-		Font awtFont = new Font(systemFont, Font.BOLD, fontSize);
-		return new TrueTypeFont(awtFont, true);
-	}
-	
-	/**
 	 * Loads a TrueType font from a .ttf file.
 	 * 
-	 * @param fontFile The name of the .ttf file
+	 * @param fontFileLocation The path to the TTF file (including its name)
 	 * @param fontSize The size of the font
 	 * @return The TrueTypeFont loaded
 	 */
-	public static TrueTypeFont loadFont(String fontFile, int fontSize) { 
-		Font fnt = null;
-		
+	public static TrueTypeFont loadFont(String fontFileLocation, int fontSize) { 
+		Font startFont = null;
 		try {
-			InputStream inputStream = ResourceLoader.getResourceAsStream(fontFile);
-			fnt = Font.createFont(Font.TRUETYPE_FONT, inputStream);
-			fnt.deriveFont((float)fontSize);
-		} catch (Exception e) {
+			startFont = Font.createFont(Font.TRUETYPE_FONT, new BufferedInputStream(ResourceLoader.getResourceAsStream(fontFileLocation)));
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		if (fnt == null) System.out.println("Unable to load font");
-		
-		return new TrueTypeFont(fnt, false);
+		Font baseFont = startFont.deriveFont(Font.PLAIN, fontSize);
+		return new TrueTypeFont(baseFont, false); // The boolean determines whether to anti-alias
 	}
 }
