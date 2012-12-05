@@ -26,7 +26,7 @@ import fostering.evil.christmascrashers.engine.RenderMonkey;
 public class IntroState extends State {
 
 	/**
-	 * Contains the textures used in the loading screen animation
+	 * Contains the textures used in the loading screen animation.
 	 */
 	private HashMap<Integer, Texture> textures = new HashMap<Integer, Texture>();
 	

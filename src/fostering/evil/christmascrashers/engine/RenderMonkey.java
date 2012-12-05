@@ -11,6 +11,8 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.util.ResourceLoader;
 
+import fostering.evil.christmascrashers.ChristmasCrashers;
+
 /**
  * The RenderMonkey provides various rendering utilities/shortcuts if you feed him enough bananas.
  * 
@@ -33,6 +35,29 @@ public class RenderMonkey {
 	 * Blue component of window color
 	 */
 	public static double default_window_b = 0.4;
+	
+	/**
+	 * Renders a colored rectangle with the specified color intensities that fills up the game window.
+	 * 
+	 * @param r Red intensity (must be between 0.0 and 1.0, inclusive)
+	 * @param g Green intensity (must be between 0.0 and 1.0, inclusive)
+	 * @param b Blue intensity (must be between 0.0 and 1.0, inclusive)
+	 */
+	public static void renderBackground(double r, double g, double b) {
+		renderTransparentBackground(r, g, b, 1.0);
+	}
+	
+	/**
+	 * Renders a colored rectangle with the specified color intensities and transparency level that fills up the game window.
+	 * 
+	 * @param r Red intensity (must be between 0.0 and 1.0, inclusive)
+	 * @param g Green intensity (must be between 0.0 and 1.0, inclusive)
+	 * @param b Blue intensity (must be between 0.0 and 1.0, inclusive)
+	 * @param transparency The transparency factor of the rectangle (0 = entirely transparent, 1 = entirely opaque)
+	 */
+	public static void renderTransparentBackground(double r, double g, double b, double transparency) {
+		renderTransparentColoredRectangle(0, 0, ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight(), r, g, b, transparency);
+	}
 	
 	/**
 	 * Renders a fully opaque rectangular outline with the supplied attributes at the supplied location.

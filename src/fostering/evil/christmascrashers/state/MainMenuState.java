@@ -2,16 +2,20 @@ package fostering.evil.christmascrashers.state;
 
 import static org.lwjgl.opengl.GL11.*;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.newdawn.slick.opengl.Texture;
+import org.newdawn.slick.opengl.TextureLoader;
+import org.newdawn.slick.util.ResourceLoader;
 
 import fostering.evil.christmascrashers.ChristmasCrashers;
 import fostering.evil.christmascrashers.engine.GLGuru;
 import fostering.evil.christmascrashers.engine.RenderMonkey;
-
-
 
 /**
  * The main menu state presents the user with clickable options, such as "start game" and "exit",
@@ -22,6 +26,11 @@ import fostering.evil.christmascrashers.engine.RenderMonkey;
  */
 public class MainMenuState extends State {
 
+	/**
+	 * Contains the textures used for the game option/navigation buttons.
+	 */
+	private HashMap<Integer, Texture> textures = new HashMap<Integer, Texture>();
+	
 	/**
 	 * The speed at which the camera zooms in on the starfield.
 	 */
@@ -39,17 +48,43 @@ public class MainMenuState extends State {
 	private static Point[] points = new Point[1000];
 	
 	/**
+	 * How long the animation that fades in the starfield animation and option buttons should take, in milliseconds.
+	 */
+	private int animationSpeed;
+
+	/**
+	 * The current progress through the fade-in animation (this value starts at 0 and increments until it reaches 1000).
+	 */
+	private static double animationProgress;
+
+	/**
 	 * Constructor - initializes the keyDown value to false and populates the importantKeys ArrayList
 	 * (inherited from the {@link State} superclass).
 	 */
 	public MainMenuState() {
 		if (ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("Loading textures for the Intro state.");
+		try {
+			textures.put(2, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("files" + File.separator + "CCStartGameButton.PNG")));
+			textures.put(1, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("files" + File.separator + "CCLevelEditorButton.PNG")));
+			textures.put(0, TextureLoader.getTexture("PNG", ResourceLoader.getResourceAsStream("files" + File.separator + "CCExitButton.PNG")));
+		} catch (IOException e) {
+			System.err.println("Failed to load texture(s) for the MainMenu state!");
+			e.printStackTrace();
+		}
+		if (ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("Loading navigation button locations and dimensions.");
+		
+		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing MainMenu state variables.");
 		keyDown = false;
-		zoomSpeed = 1f;
+		zoomSpeed = 1.1f;
 		zoomDistance = 0f;
+		animationSpeed = 8000;
+		animationProgress = 1000;
 		addImportantKey(Keyboard.KEY_ESCAPE);
 	}
+
 	@Override
 	public StateType handleInput() {
 		checkKeyStates();
@@ -67,7 +102,7 @@ public class MainMenuState extends State {
 
 	@Override
 	public void logic() {
-
+		
 	}
 
 	@Override
@@ -75,6 +110,7 @@ public class MainMenuState extends State {
 		if (points[0] != null) {
 			// Switch into 3D mode (gluPerspective)
 			GLGuru.initGL3D();
+			glColor3d(1, 1, 1);
 	        glTranslatef(0, 0, zoomSpeed);
 	        zoomDistance += zoomSpeed;
 	        glBegin(GL_POINTS);
@@ -86,8 +122,53 @@ public class MainMenuState extends State {
 	        		glVertex3f(p.x, p.y, p.z);
 	        	}
 	        glEnd();
-	        // Switch back to 2D mode (glOrtho)
-	        GLGuru.initGL2D();
+
+	        // Switch back to 2D mode using a glOrtho call adjusted based on the current zoomDistance
+	        glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0, ChristmasCrashers.getWindowWidth(), 0, ChristmasCrashers.getWindowHeight(), -zoomDistance + 1, -zoomDistance - 1);
+			glMatrixMode(GL_MODELVIEW);
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			glDisable(GL_DEPTH_TEST);
+			glShadeModel(GL_SMOOTH);
+			glClearDepth(1);
+
+			// Load fade-in animation components
+			if (animationProgress < 1000) {
+				if (animationProgress < 400) { // Fade in the starfield
+					RenderMonkey.renderTransparentBackground(0, 0, 0, 	1 - animationProgress / 400);
+				}
+				if (animationProgress > 600) { // Fade in the buttons
+					// Start Game button (fades in first)
+					double transparency = (animationProgress - 600) / 300;
+					if (transparency > 1)
+						transparency = 1;
+					Texture tex = textures.get(2);
+					RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 170, 140 + 2 * (tex.getTextureHeight() + 20), 180, 50, tex, Math.pow(transparency, 2));
+					// Level Editor button (fades in second)
+					transparency = (animationProgress - 650) / 300;
+					if (transparency < 0)
+						transparency = 0;
+					if (transparency > 1)
+						transparency = 1;
+					tex = textures.get(1);
+					RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 90, 140 + tex.getTextureHeight() + 20, 180, 50, tex, Math.pow(transparency, 2));
+					// Exit button (fades in last)
+					transparency = (animationProgress - 700) / 300;
+					if (transparency < 0)
+						transparency = 0;
+					tex = textures.get(0);
+					RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 10, 140, 180, 50, tex, Math.pow(transparency, 2));
+				}
+				animationProgress += (double) ChristmasCrashers.getDelta() * 1000 / animationSpeed;
+				if (animationProgress > 1000) // Prevent overshooting the animationProgress limit
+					animationProgress = 1000;
+			} else { // Load fully opaque option buttons
+				RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 170, 140 + 2 * (textures.get(2).getTextureHeight() + 20), 180, 50, textures.get(2), 1.0);
+				RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 90, 140 + textures.get(1).getTextureHeight() + 20, 180, 50, textures.get(1), 1.0);
+				RenderMonkey.renderTransparentTexturedRectangle(ChristmasCrashers.getWindowWidth() / 2 - 10, 140, 180, 50, textures.get(0), 1.0);
+			}
 		}
 	}
 	
@@ -104,7 +185,7 @@ public class MainMenuState extends State {
 	}
 	
 	/**
-	 * Populates the {@link #points} array to begin the starfield animation.
+	 * Populates the {@link #points} array to begin the starfield animation, and starts the fade-in animation.
 	 */
 	public static void initialize() {
 		if (ChristmasCrashers.isDebugModeEnabled())
@@ -112,13 +193,14 @@ public class MainMenuState extends State {
 		Random random = new Random();
 		for (int i = 0; i < points.length; i++)
 			points[i] = new Point((random.nextFloat() - 0.5f) * 100f, (random.nextFloat() - 0.5f) * 100f, random.nextInt(200) - (300 + zoomDistance));
+		animationProgress = 0;
 	}
 	
 	/**
 	 * Represents a point (star) in the starfield animation.
 	 * 
 	 * @author LinearLogic
-	 * @since 0.0.7
+	 * @since 0.1.1
 	 */
 	private static class Point {
 

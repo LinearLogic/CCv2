@@ -20,7 +20,7 @@ import fostering.evil.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.1.1
+ * @version 0.1.2
  */
 public class ChristmasCrashers {
 	
@@ -92,15 +92,17 @@ public class ChristmasCrashers {
 		
 		// Logic/rendering loop
 		while(running) {
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Covers 2D and 3D
 			
-			handleState(); // This includes input handling, logic execution, and rendering
+			handleState(); // This calls the input handling, logic execution, and rendering for the current state
 			
 			Display.update();
-			Display.sync(60);
+			Display.sync(60); // Framerate = 60 fps
 			if (Display.isCloseRequested())
 				running = false;
 		}
+		if (debugModeEnabled)
+			System.out.println("Destroying the openGL context and closing the game window.");
 		Display.destroy();
 		System.exit(0);
 	}
@@ -127,6 +129,8 @@ public class ChristmasCrashers {
 	 * Constructs a State subclass object for each state type.
 	 */
 	private void loadStates() {
+		if (debugModeEnabled)
+			System.out.println("Loading game states.");
 		introState = new IntroState();
 		mainMenuState = new MainMenuState();
 		gameState = new GameState();
