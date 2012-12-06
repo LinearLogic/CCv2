@@ -1,4 +1,4 @@
-package fostering.evil.christmascrashers.state;
+package ss.linearlogic.christmascrashers.state;
 
 import java.util.ArrayList;
 
@@ -12,21 +12,21 @@ import org.lwjgl.input.Keyboard;
  * @author LinearLogic
  *@since 0.0.2
  */
-public abstract class State implements StateInterface{
+public abstract class State implements StateInterface {
 
 	/**
 	 * Contains the integer IDs of all the keyboard keys that should be monitored. If any of them are
 	 * depressed, the {@link #keyDown} value will be 'true'
 	 */
 	protected ArrayList<Integer> importantKeys = new ArrayList<Integer>();
-	
+
 	/**
 	 * Represents the collective status of all {@link #importantKeys}. Only if its value is 'true' will new
 	 * keyboard input be handled. In the case of the {@link MainMenuState}, the left mouse button also
 	 * affects the status of the keyDown flag.
 	 */
 	protected static boolean keyDown;
-	
+
 	/**
 	 * Iterates through the keyIDs in {@link #importantKeys}, checking the state of each key. If one of
 	 * the relevant keys is depressed, function returns 'true'. Otherwise, it returns 'false'.
@@ -39,7 +39,7 @@ public abstract class State implements StateInterface{
 		}
 		keyDown = false;
 	}
-	
+
 	/**
 	 * @return The value of the {@link #keyDown} variable
 	 */
@@ -53,14 +53,14 @@ public abstract class State implements StateInterface{
 	public static void setKeyDown(boolean value) {
 		keyDown = value;
 	}
-	
+
 	@Override
 	public void addImportantKey(int keyID) {
 		if (importantKeys.contains(keyID))
 			return;
 		importantKeys.add(keyID);
 	}
-	
+
 	@Override
 	public void removeImportantKey(int keyID) {
 		if (!importantKeys.contains(keyID))

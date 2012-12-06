@@ -1,4 +1,4 @@
-package fostering.evil.christmascrashers.state;
+package ss.linearlogic.christmascrashers.state;
 
 import java.util.ArrayList;
 

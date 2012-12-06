@@ -1,6 +1,6 @@
-package fostering.evil.christmascrashers.state;
+package ss.linearlogic.christmascrashers.state;
 
-import fostering.evil.christmascrashers.ChristmasCrashers;
+import ss.linearlogic.christmascrashers.ChristmasCrashers;
 
 /**
  * The window state is selected when an in-game window pops up, such as a respawn prompt. While
@@ -18,12 +18,12 @@ public abstract class WindowState extends State {
 	 * be rendered (this is determined based on each window's time of {@link #birth time of birth}.
 	 */
 	protected int priority;
-	
+
 	/**
 	 * The adjusted system time at which the window object was created.
 	 */
 	protected long birth;
-	
+
 	/**
 	 * WindowState superclass constructor - sets the {@link #priority} of the window object to the specified integer
 	 * value and the {@link #birth} value to the current system time (retrieved with {@link ChristmasCrashers#getTime()}).

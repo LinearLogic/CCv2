@@ -1,21 +1,16 @@
-package fostering.evil.christmascrashers.state;
-
-//import static org.lwjgl.opengl.GL11.*;
+package ss.linearlogic.christmascrashers.state;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-import fostering.evil.christmascrashers.ChristmasCrashers;
-import fostering.evil.christmascrashers.engine.RenderMonkey;
-
-
+import ss.linearlogic.christmascrashers.ChristmasCrashers;
+import ss.linearlogic.christmascrashers.engine.RenderMonkey;
 
 /**
  * The introduction state is entered first. While active, it runs the loading animation, and then prompts
@@ -30,34 +25,34 @@ public class IntroState extends State {
 	 * Contains the textures used in the loading screen animation.
 	 */
 	private HashMap<Integer, Texture> textures = new HashMap<Integer, Texture>();
-	
+
 	/**
 	 * Holds the current state of the loading animation.
 	 */
 	private static boolean animationComplete;
-	
+
 	/**
 	 * Rate at which the "loading..." text in the splash fades in and out, in milliseconds per cycle.
 	 */
 	private int fadeFrequency;
-	
+
 	/**
 	 * The fade value in the current frame (determines the {@link #transparencyLevel} of the "loading..." text
 	 * using a cosine function with {@link #fadeFrequency} as a parameter).
 	 */
 	private double fadeValue;
-	
+
 	/**
 	 * The transparency level for the rectangle that fades the "loading..." text in and out.
 	 */
 	private double transparencyLevel;
-	
+
 	/**
 	 * Represents the state of the game worlds: 'true' if they have all been loaded, otherwise 'false'.
 	 * If this value is true, the world-loader thread will not be called in the {@link #initialize()} method.
 	 */
 	static boolean worldsLoaded;
-	
+
 	/**
 	 * Constructor - loads intro textures, sets the {@link #fadeFrequency}, initializes the {@link #finishedLoading} and {@link State#keyDown} values to 'false',
 	 * and populates the {@link State#importantKeys} ArrayList. Note that the splash animation and
@@ -116,7 +111,7 @@ public class IntroState extends State {
 			RenderMonkey.renderTexturedRectangle(0.0, ChristmasCrashers.getWindowHeight() / 2 - textures.get(2).getTextureHeight(), textures.get(2).getTextureWidth(), textures.get(2).getTextureHeight(), textures.get(2)); // Render the appropriately-faded loading banner
 		}
 	}
-	
+
 	/**
 	 * Begins the loading animation and executes the game-loader thread.
 	 */
@@ -125,7 +120,7 @@ public class IntroState extends State {
 			System.out.println("Initializing Intro state.");
 		animationComplete = false;
 		if (!worldsLoaded) {
-			// load worlds here
+			// Start world loading thread here
 		}
 	}
 }

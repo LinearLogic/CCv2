@@ -1,4 +1,4 @@
-package fostering.evil.christmascrashers.state;
+package ss.linearlogic.christmascrashers.state;
 
 /**
  * Enum containing all the possible game states, which determine which portion of the input,
@@ -12,17 +12,17 @@ public enum StateType {
 	 * The flag for the {@link IntroState}
 	 */
 	INTRO,
-	
+
 	/**
 	 * The flag for the {@link MainMenuState}
 	 */
 	MAIN_MENU,
-	
+
 	/**
 	 * The flag for the {@link GameState}
 	 */
 	GAME,
-	
+
 	/**
 	 * The flag for the {@link WindowState}
 	 */

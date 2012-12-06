@@ -1,4 +1,4 @@
-package fostering.evil.christmascrashers.engine;
+package ss.linearlogic.christmascrashers.engine;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -13,7 +13,7 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureImpl;
 import org.newdawn.slick.util.ResourceLoader;
 
-import fostering.evil.christmascrashers.ChristmasCrashers;
+import ss.linearlogic.christmascrashers.ChristmasCrashers;
 
 /**
  * The RenderMonkey provides various rendering utilities/shortcuts if you feed him enough bananas.
@@ -22,22 +22,22 @@ import fostering.evil.christmascrashers.ChristmasCrashers;
  * @since 0.0.4
  */
 public class RenderMonkey {
-	
+
 	/**
 	 * Red component of window color
 	 */
 	public static double default_window_r = 0.4;
-	
+
 	/**
 	 * Green component of window color
 	 */
 	public static double default_window_g = 0.4;
-	
+
 	/**
 	 * Blue component of window color
 	 */
 	public static double default_window_b = 0.4;
-	
+
 	/**
 	 * Renders a colored rectangle with the specified color intensities that fills up the game window.
 	 * 
@@ -48,7 +48,7 @@ public class RenderMonkey {
 	public static void renderBackground(double r, double g, double b) {
 		renderTransparentBackground(r, g, b, 1.0);
 	}
-	
+
 	/**
 	 * Renders a colored rectangle with the specified color intensities and transparency level that fills up the game window.
 	 * 
@@ -60,7 +60,7 @@ public class RenderMonkey {
 	public static void renderTransparentBackground(double r, double g, double b, double transparency) {
 		renderTransparentColoredRectangle(0, 0, ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight(), r, g, b, transparency);
 	}
-	
+
 	/**
 	 * Renders a fully opaque rectangular outline with the supplied attributes at the supplied location.
 	 * @param x X-coordinate of the top lefthand corner of the rectangle (pixel location within the rendering window)
@@ -74,7 +74,7 @@ public class RenderMonkey {
 	public static void renderLinedRectangle(double x, double y, double w, double h, double r, double g, double b) {
 		renderTransparentLinedRectangle(x, y, w, h, r, g, b, 1.0);
 	}
-	
+
 	/**
 	 * Renders a (partially) transparent rectangular outline with the supplied attributes at the supplied location.
 	 * @param x X-coordinate of the top lefthand corner of the rectangle (pixel location within the rendering window)
@@ -88,7 +88,6 @@ public class RenderMonkey {
 	 */
 	public static void renderTransparentLinedRectangle(double x, double y, double w, double h, double r, double g, double b, double transparency) {
 		glColor4d(r, g, b, transparency);
-		
 		glBegin(GL_LINE_LOOP);
 			glVertex2d(x, y); // Top left
 			glVertex2d(x + w, y); // Top right
@@ -96,7 +95,7 @@ public class RenderMonkey {
 			glVertex2d(x, y + h); // Bottom left
 		glEnd();
 	}
-	
+
 	/**
 	 * Renders a fully opaque colored rectangle with the supplied attributes at the supplied location.
 	 * @param x X-coordinate of the top lefthand corner of the rectangle (pixel location within the rendering window)
@@ -110,7 +109,7 @@ public class RenderMonkey {
 	public static void renderColoredRectangle(double x, double y, double w, double h, double r, double g, double b) {
 		renderTransparentColoredRectangle(x, y, w, h, r, g, b, 1.0);
 	}
-	
+
 	/**
 	 * Renders a (partially) transparent colored rectangle with the supplied attributes at the supplied location.
 	 * @param x X-coordinate of the top lefthand corner of the rectangle (pixel location within the rendering window)
@@ -124,19 +123,16 @@ public class RenderMonkey {
 	 */
 	public static void renderTransparentColoredRectangle(double x, double y, double w, double h, double r, double g, double b, double transparency) {
 		glDisable(GL_TEXTURE_2D);
-		
 		glColor4d(r, g, b, transparency);
-		
 		glBegin(GL_TRIANGLE_FAN);
 			glVertex2d(x, y); // Top left
 			glVertex2d(x + w, y); // Top right
 			glVertex2d(x + w, y + h); // Bottom right
 			glVertex2d(x, y + h); // Bottom left
 		glEnd();
-		
 		glEnable(GL_TEXTURE_2D);
 	}
-	
+
 	/**
 	 * Renders a fully opaque rectangle with a texture object (fitted to the rectangle).
 	 * 
@@ -149,7 +145,7 @@ public class RenderMonkey {
 	public static void renderTexturedRectangle(double x, double y, double w, double h, Texture texture) {
 		renderTransparentTexturedRectangle(x, y, w, h, texture, 0.0, 0.0, 1.0, 1.0, 1.0);
 	}
-	
+
 	/**
 	 * Renders a fully opaque rectangle with a texture object and the supplied location and dimensions of the
 	 * texture within the rectangle.
@@ -167,7 +163,7 @@ public class RenderMonkey {
 	public static void renderTexturedRectangle(double x, double y, double w, double h, Texture texture, double texX, double texY,  double texW, double texH) {
 		renderTransparentTexturedRectangle(x, y, w, h, texture, texX, texY, texW, texH, 1.0);
 	}
-	
+
 	/**
 	 * Renders a (partially) transparent rectangle with a texture object (fitted to the rectangle).
 	 * 
@@ -181,7 +177,7 @@ public class RenderMonkey {
 	public static void renderTransparentTexturedRectangle(double x, double y, double w, double h, Texture texture, double transparency) {
 		renderTransparentTexturedRectangle(x, y, w, h, texture, 0.0, 0.0, 1.0, 1.0, transparency);
 	}
-	
+
 	/**
 	 * Renders a (partially) transparent rectangle with a texture object and the supplied location and dimensions
 	 *  of the texture within the rectangle.
@@ -217,7 +213,7 @@ public class RenderMonkey {
 		glEnd();
 		glDisable(GL_TEXTURE_2D);
 	}
-	
+
 	/**
 	 * Renders a string in white.
 	 * 
@@ -229,7 +225,7 @@ public class RenderMonkey {
 	public static void renderString(String string, double x, double y, TrueTypeFont font) {		
 		renderString(string, x, y, font, Color.white);
 	}
-	
+
 	/**
 	 * Render a string in the color supplied.
 	 * 
@@ -251,7 +247,7 @@ public class RenderMonkey {
 		glOrtho(GLGuru.getXDisplacement(), GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth(), GLGuru.getYDisplacement(), GLGuru.getYDisplacement() + ChristmasCrashers.getWindowHeight(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
 		glMatrixMode(GL_MODELVIEW);
 	}
-	
+
 	/**
 	 * Loads a TrueType font from a .ttf file.
 	 * 

@@ -1,4 +1,4 @@
-package fostering.evil.christmascrashers;
+package ss.linearlogic.christmascrashers;
 
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -11,73 +11,73 @@ import org.lwjgl.Sys;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-import fostering.evil.christmascrashers.engine.GLGuru;
-import fostering.evil.christmascrashers.state.GameState;
-import fostering.evil.christmascrashers.state.IntroState;
-import fostering.evil.christmascrashers.state.MainMenuState;
-import fostering.evil.christmascrashers.state.State;
-import fostering.evil.christmascrashers.state.StateType;
+import ss.linearlogic.christmascrashers.engine.GLGuru;
+import ss.linearlogic.christmascrashers.state.GameState;
+import ss.linearlogic.christmascrashers.state.IntroState;
+import ss.linearlogic.christmascrashers.state.MainMenuState;
+import ss.linearlogic.christmascrashers.state.State;
+import ss.linearlogic.christmascrashers.state.StateType;
 
 /**
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.1.5
+ * @version 0.1.6
  */
 public class ChristmasCrashers {
-	
+
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.1.5";
-	
+	public static final String VERSION = "0.1.6";
+
 	/**
 	 * Indicates whether the program is running in debug mode
 	 */
 	private static boolean debugModeEnabled;
-	
+
 	/**
 	 * Width of the game window in pixels
 	 */
 	private static int windowWidth;
-	
+
 	/**
 	 * Height of the game window, in pixels
 	 */
 	private static int windowHeight;
-	
+
 	/**
 	 * Current game state flag - determines which state is handled in the input/logic/rendering loop.
 	 * It is initialized to the introduction state, and is updated with each pass through the game loop.
 	 */
 	private static StateType state;
-	
+
 	/**
 	 * IntroState object, initialized in the {@link #loadStates()} method.
 	 */
 	private State introState;
-	
+
 	/**
 	 * MainMenuState object, initialized in the {@link #loadStates()} method.
 	 */
 	private State mainMenuState;
-	
+
 	/**
 	 * GameState object, initialized in the {@link #loadStates()} method.
 	 */
 	private State gameState;
-	
+
 	/**
 	 * Set to 'true' in the {@link #ChristmasCrashers(int, int) contructor}, this boolean variable will cause
 	 * the program to exit the game loop if set to 'false'.
 	 */
 	private static boolean running = false;
-	
+
 	/**
 	 * The system time (retrieved using {@link #getTime()}) at which the most recent frame was rendered.
 	 */
 	private static long lastFrame;
-	
+
 	/**
 	 * Game object constructor - initializes openGL, starts the timer, and runs the game logic and rendering loop.
 	 * 
@@ -99,13 +99,13 @@ public class ChristmasCrashers {
 		initTimer();
 		running = true;
 		IntroState.initialize();
-		
+
 		// Logic/rendering loop
 		while(running) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Covers 2D and 3D
-			
+
 			handleState(); // This calls the input handling, logic execution, and rendering for the current state
-			
+
 			Display.update();
 			Display.sync(60); // Framerate = 60 fps
 			if (Display.isCloseRequested())
@@ -116,7 +116,7 @@ public class ChristmasCrashers {
 		Display.destroy();
 		System.exit(0);
 	}
-	
+
 	/**
 	 * Initializes the game display window with the given pixel dimensions
 	 * 
@@ -133,8 +133,7 @@ public class ChristmasCrashers {
 			e.printStackTrace();
 		}
 	}
-	
-	
+
 	/**
 	 * Constructs a State subclass object for each state type.
 	 */
@@ -145,14 +144,14 @@ public class ChristmasCrashers {
 		mainMenuState = new MainMenuState();
 		gameState = new GameState();
 	}
-	
+
 	/**
 	 * Initializes the {@link #lastFrame} value to the current system time
 	 */
 	private void initTimer() {
 		lastFrame = getTime();
 	}
-	
+
 	/**
 	 * Calls the handleInput(), draw(), and render() methods in the state class determined by the {@link #state} flag.
 	 */
@@ -178,14 +177,14 @@ public class ChristmasCrashers {
 				break;
 		}
 	}
-	
+
 	/**
 	 * @return The adjusted current system time
 	 */
 	public static long getTime() {
 		return (Sys.getTime() * 1000) / Sys.getTimerResolution();
 	}
-	
+
 	/**
 	 * Returns the time between the current frame and the last (cast to an int value) and updates the
 	 * lastFrame value with the current system time.
@@ -198,34 +197,35 @@ public class ChristmasCrashers {
 		lastFrame = getTime();
 		return delta;
 	}
-	
+
 	/**
 	 * @return The current {@link #state game state flag}
 	 */
 	public static StateType getState() {
 		return state;
 	}
-	
+
 	/**
 	 * @return The {@link #windowWidth width} of the game window
 	 */
 	public static int getWindowWidth() {
 		return windowWidth;
 	}
-	
+
 	/**
 	 * @return The {@link #windowHeight height} of the game window
 	 */
 	public static int getWindowHeight() {
 		return windowHeight;
 	}
+
 	/**
 	 * @return The value of the {@link #debugModeEnabled} flag, which is 'true' iff debug mode is enabled
 	 */
 	public static boolean isDebugModeEnabled() {
 		return debugModeEnabled;
 	}
-	
+
 	/**
 	 * Sets the value of {@link #state} to 'false', causing the program to exit the game loop.
 	 */
@@ -234,7 +234,7 @@ public class ChristmasCrashers {
 			System.out.println("Received quit command, exiting game loop.");
 		running = false;
 	}
-	
+
 	/**
 	 * Program entry point, creates a game object after determining whether to run the program in debug mode.
 	 * 

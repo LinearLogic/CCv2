@@ -1,4 +1,4 @@
-package fostering.evil.christmascrashers.state;
+package ss.linearlogic.christmascrashers.state;
 
 /**
  * Game state interface, containing the input handling, logic, and rendering methods to be implemented
@@ -16,7 +16,7 @@ public interface StateInterface {
 	 * @return The new state that will be switched on in the next iteration of the main loop.
 	 */
 	StateType handleInput();
-	
+
 	/**
 	 * Executes the logic for each graphical and non-graphical object.
 	 */
@@ -26,16 +26,14 @@ public interface StateInterface {
 	 * Renders the frame (and all graphical objects in it) for the game state.
 	 */
 	void draw();
-	
-	// Keyboard handling stuff
-	
+
 	/**
 	 * Adds the specified keyID to the {@link State#importantKeys} list.
 	 * 
 	 * @param keyID The integer ID of the keyboard key
 	 */
 	public void addImportantKey(int keyID);
-	
+
 	/**
 	 * Remvoes the specified keyID from the {@link State#importantKeys} list.
 	 * 

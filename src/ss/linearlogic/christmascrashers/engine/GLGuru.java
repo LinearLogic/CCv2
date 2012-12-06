@@ -1,4 +1,4 @@
-package fostering.evil.christmascrashers.engine;
+package ss.linearlogic.christmascrashers.engine;
 
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
@@ -16,7 +16,8 @@ import static org.lwjgl.opengl.GL11.glMatrixMode;
 import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glShadeModel;
 import static org.lwjgl.util.glu.GLU.gluPerspective;
-import fostering.evil.christmascrashers.ChristmasCrashers;
+
+import ss.linearlogic.christmascrashers.ChristmasCrashers;
 
 /**
  * The GLGuru is the gateway to openGL, providing methods for setting up 2D and 3D openGL rendering.
@@ -30,24 +31,24 @@ public class GLGuru {
 	 * How far to the right (positive) or left (negative) the camera is panned
 	 */
 	private static double xDisplacement;
-	
+
 	/**
 	 * How far up (positive) or down (negative) the camera is panned
 	 */
 	private static double yDisplacement;
-	
+
 	/**
 	 * How far in (positive) or out (negative) the camera is zoomed
 	 */
 	private static double zDisplacement;
-	
+
 	/**
 	 * Sets up openGL for 2D graphics using glOrtho with the current game window width and height as dimensions.
 	 */
 	public static void initGL2D() {
 		initGL2D(ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight());
 	}
-	
+
 	/**
 	 * Sets up openGL for 2D graphics using glOrtho with custom dimensions.
 	 * 
@@ -59,16 +60,13 @@ public class GLGuru {
 		glLoadIdentity();
 		glOrtho(xDisplacement, xDisplacement + width, yDisplacement, yDisplacement + height, zDisplacement + 1, zDisplacement - 1);
 		glMatrixMode(GL_MODELVIEW);
-		
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		
 		glDisable(GL_DEPTH_TEST);
 		glShadeModel(GL_SMOOTH);
-		
 		glClearDepth(1);
 	}
-	
+
 	/**
 	 * Sets up openGL for 3D graphics using gluPerspective with the current game window width and height for the aspect ratio.
 	 */
@@ -88,7 +86,7 @@ public class GLGuru {
         glMatrixMode(GL_MODELVIEW);
         glEnable(GL_DEPTH_TEST);
 	}
-	
+
 	/**
 	 * @return The current {@link #xDisplacement}
 	 */
@@ -103,7 +101,7 @@ public class GLGuru {
 	public static void setXDisplacement(double displacement) {
 		xDisplacement = displacement;
 	}
-	
+
 	/**
 	 * @return The current {@link #yDisplacement}
 	 */

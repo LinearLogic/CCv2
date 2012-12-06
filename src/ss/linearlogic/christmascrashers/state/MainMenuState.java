@@ -1,4 +1,4 @@
-package fostering.evil.christmascrashers.state;
+package ss.linearlogic.christmascrashers.state;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -15,9 +15,10 @@ import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
 
-import fostering.evil.christmascrashers.ChristmasCrashers;
-import fostering.evil.christmascrashers.engine.GLGuru;
-import fostering.evil.christmascrashers.engine.RenderMonkey;
+import ss.linearlogic.christmascrashers.ChristmasCrashers;
+import ss.linearlogic.christmascrashers.engine.GLGuru;
+import ss.linearlogic.christmascrashers.engine.RenderMonkey;
+
 
 /**
  * The main menu state presents the user with clickable options, such as "start game" and "exit",
@@ -32,18 +33,18 @@ public class MainMenuState extends State {
 	 * Contains the textures used for the game option/navigation buttons.
 	 */
 	private static HashMap<Integer, Texture> textures = new HashMap<Integer, Texture>();
-	
+
 	/**
 	 * The speed at which the camera zooms in on the starfield.
 	 */
 	private float zoomSpeed;
-	
+
 	/**
 	 * The {@link #points} in the starfield, which represent stars. When a point moves behind the camera,
 	 * it is replaced with a new point inside the camera's current view, to provide infinite zooming.
 	 */
 	private static Point[] points = new Point[1000];
-	
+
 	/**
 	 * How long the animation that fades in the starfield animation and option buttons should take, in milliseconds.
 	 */
@@ -53,13 +54,13 @@ public class MainMenuState extends State {
 	 * The current progress through the fade-in animation (this value starts at 0 and increments until it reaches 1000).
 	 */
 	private static double animationProgress;
-	
+
 	/**
 	 * The {@link NavigationButton} currently selected by the mouse (NONE if the mouse isn't hovering over one of
 	 * the navigation buttons)
 	 */
 	private NavigationButton selectedButton;
-	
+
 	/**
 	 * The font used in the MainMenu screen (for the version, etc.)
 	 */
@@ -107,7 +108,7 @@ public class MainMenuState extends State {
 			selectedButton = NavigationButton.EXIT;
 		else
 			selectedButton = NavigationButton.NONE;
-		
+
 		if (Mouse.isButtonDown(0) && !keyDown && (animationProgress >= 1000)) {// Left click
 			keyDown = true;
 			switch(selectedButton) {
@@ -130,7 +131,7 @@ public class MainMenuState extends State {
 
 	@Override
 	public void logic() {
-		
+
 	}
 
 	@Override
@@ -150,7 +151,7 @@ public class MainMenuState extends State {
 	        		glVertex3f(p.x, p.y, p.z);
 	        	}
 	        glEnd();
-	        
+
 	        // Switch back to 2D mode using a glOrtho call adjusted based on the current zoomDistance
 	        glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
