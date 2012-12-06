@@ -22,7 +22,7 @@ import ss.linearlogic.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.1.6
+ * @version 0.2.1
  */
 public class ChristmasCrashers {
 
