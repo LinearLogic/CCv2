@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 import org.newdawn.slick.util.ResourceLoader;
@@ -107,7 +108,7 @@ public class IntroState extends State {
 
 	@Override
 	public void draw() {
-		RenderMonkey.renderColoredRectangle(0.0, 0.0, ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight(), 1.0, 1.0, 1.0); // Render a white background
+		RenderMonkey.renderBackground(1, 1, 1);
 		RenderMonkey.renderTexturedRectangle(0.0, ChristmasCrashers.getWindowHeight() / 2 - 40, textures.get(0).getTextureWidth(), textures.get(0).getTextureHeight(), textures.get(0)); // Render the ChristmasCrashers banner
 		if (!animationComplete) {
 			RenderMonkey.renderTransparentTexturedRectangle(0.0, ChristmasCrashers.getWindowHeight() / 2 - textures.get(1).getTextureHeight(), textures.get(1).getTextureWidth(), textures.get(1).getTextureHeight(), textures.get(1), transparencyLevel); // Render the appropriately-faded loading banner

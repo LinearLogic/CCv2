@@ -1,6 +1,8 @@
 package fostering.evil.christmascrashers;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
 
 import java.util.Scanner;
 
@@ -20,14 +22,14 @@ import fostering.evil.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.1.4
+ * @version 0.1.5
  */
 public class ChristmasCrashers {
 	
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.1.4";
+	public static final String VERSION = "0.1.5";
 	
 	/**
 	 * Indicates whether the program is running in debug mode
@@ -88,6 +90,9 @@ public class ChristmasCrashers {
 		if (debugModeEnabled)
 			System.out.println("Constructing the game object. Window dimensions: " + width + "x" + height + " pixels.");
 		initDisplay(windowWidth, windowHeight);
+		GLGuru.setXDisplacement(0);
+		GLGuru.setYDisplacement(0);
+		GLGuru.setZDisplacement(0);
 		GLGuru.initGL2D(windowWidth, windowHeight);
 		state = StateType.INTRO;
 		loadStates();

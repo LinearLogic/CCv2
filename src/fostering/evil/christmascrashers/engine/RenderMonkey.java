@@ -90,10 +90,10 @@ public class RenderMonkey {
 		glColor4d(r, g, b, transparency);
 		
 		glBegin(GL_LINE_LOOP);
-			glVertex2d(x, y + h);
-			glVertex2d(x, y);
-			glVertex2d(x + w, y);
-			glVertex2d(x + w, y + h);
+			glVertex2d(x, y); // Top left
+			glVertex2d(x + w, y); // Top right
+			glVertex2d(x + w, y + h); // Bottom right
+			glVertex2d(x, y + h); // Bottom left
 		glEnd();
 	}
 	
@@ -128,10 +128,10 @@ public class RenderMonkey {
 		glColor4d(r, g, b, transparency);
 		
 		glBegin(GL_TRIANGLE_FAN);
-			glVertex2d(x, y + h);
-			glVertex2d(x, y);
-			glVertex2d(x + w, y);
-			glVertex2d(x + w, y + h);
+			glVertex2d(x, y); // Top left
+			glVertex2d(x + w, y); // Top right
+			glVertex2d(x + w, y + h); // Bottom right
+			glVertex2d(x, y + h); // Bottom left
 		glEnd();
 		
 		glEnable(GL_TEXTURE_2D);
@@ -203,9 +203,6 @@ public class RenderMonkey {
 		glBindTexture(GL_TEXTURE_2D, texture.getTextureID());
 		
 		glBegin(GL_TRIANGLE_FAN);
-			glTexCoord2d(texX, texY);
-			glVertex2d(x, y + h); // Bottom left
-			
 			glTexCoord2d(texX, texY + texH);
 			glVertex2d(x, y); // Top left
 			
@@ -214,8 +211,10 @@ public class RenderMonkey {
 			
 			glTexCoord2d(texX + texW, texY);
 			glVertex2d(x + w, y + h); // Bottom right
+
+			glTexCoord2d(texX, texY);
+			glVertex2d(x, y + h); // Bottom left
 		glEnd();
-		
 		glDisable(GL_TEXTURE_2D);
 	}
 	
@@ -242,7 +241,15 @@ public class RenderMonkey {
 	 */
 	public static void renderString(String string, double x, double y, TrueTypeFont font, Color color) {
 		TextureImpl.bindNone();
-		font.drawString((int)x, (int)y, string, color);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(GLGuru.getXDisplacement(), GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight() - GLGuru.getYDisplacement(), -GLGuru.getYDisplacement(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
+		glMatrixMode(GL_MODELVIEW);
+		font.drawString((int) x, (int) (ChristmasCrashers.getWindowHeight() - y - font.getHeight()), string, color);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		glOrtho(GLGuru.getXDisplacement(), GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth(), GLGuru.getYDisplacement(), GLGuru.getYDisplacement() + ChristmasCrashers.getWindowHeight(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
+		glMatrixMode(GL_MODELVIEW);
 	}
 	
 	/**

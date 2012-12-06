@@ -39,11 +39,6 @@ public class MainMenuState extends State {
 	private float zoomSpeed;
 	
 	/**
-	 * How far zoomed in the camera is (incremented by {@link #zoomSpeed})
-	 */
-	private static float zoomDistance;
-	
-	/**
 	 * The {@link #points} in the starfield, which represent stars. When a point moves behind the camera,
 	 * it is replaced with a new point inside the camera's current view, to provide infinite zooming.
 	 */
@@ -93,7 +88,6 @@ public class MainMenuState extends State {
 			System.out.println("Initializing MainMenu state variables.");
 		keyDown = false;
 		zoomSpeed = 1.1f;
-		zoomDistance = 0f;
 		animationSpeed = 8000;
 		animationProgress = 1000;
 		selectedButton = NavigationButton.NONE;
@@ -146,13 +140,13 @@ public class MainMenuState extends State {
 			GLGuru.initGL3D();
 			glColor3d(1, 1, 1);
 	        glTranslatef(0, 0, zoomSpeed);
-	        zoomDistance += zoomSpeed;
+	        GLGuru.setZDisplacement(GLGuru.getZDisplacement() + zoomSpeed);
 	        glBegin(GL_POINTS);
 	        	Random random = new Random();
 	        	for (int i = 0; i < points.length; i++) {
 	        		Point p = points[i];
-	        		if (p.z + zoomDistance >= 0) // Point is no longer in view, replace it.
-	        			points[i] = new Point((random.nextFloat() - 0.5f) * 100f, (random.nextFloat() - 0.5f) * 100f, random.nextInt(200) - (300 + zoomDistance));
+	        		if (p.z + GLGuru.getZDisplacement() >= 0) // Point is no longer in view, replace it.
+	        			points[i] = new Point((random.nextFloat() - 0.5f) * 100f, (random.nextFloat() - 0.5f) * 100f, random.nextInt(200) - (300 + (float) GLGuru.getZDisplacement()));
 	        		glVertex3f(p.x, p.y, p.z);
 	        	}
 	        glEnd();
@@ -160,7 +154,7 @@ public class MainMenuState extends State {
 	        // Switch back to 2D mode using a glOrtho call adjusted based on the current zoomDistance
 	        glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			glOrtho(0, ChristmasCrashers.getWindowWidth(), 0, ChristmasCrashers.getWindowHeight(), -zoomDistance + 1, -zoomDistance - 1);
+			glOrtho(0, ChristmasCrashers.getWindowWidth(), 0, ChristmasCrashers.getWindowHeight(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
 			glMatrixMode(GL_MODELVIEW);
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -196,27 +190,8 @@ public class MainMenuState extends State {
 				if (animationProgress > 1000) // Prevent overshooting the animationProgress limit
 					animationProgress = 1000;
 			} else { // Load fully opaque option buttons
-				// Behold a rather kludgy rendering block, all for the sake of the version string...
-				glMatrixMode(GL_PROJECTION);
-				glLoadIdentity();
-				glOrtho(0, ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight(), 0, -zoomDistance + 1, -zoomDistance - 1);
-				glMatrixMode(GL_MODELVIEW);
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				glDisable(GL_DEPTH_TEST);
-				glShadeModel(GL_SMOOTH);
-				glClearDepth(1);
-				RenderMonkey.renderString("v" + ChristmasCrashers.VERSION, 30, ChristmasCrashers.getWindowHeight() - 50, font, Color.lightGray);
-				glMatrixMode(GL_PROJECTION);
-				glLoadIdentity();
-				glOrtho(0, ChristmasCrashers.getWindowWidth(), 0, ChristmasCrashers.getWindowHeight(), -zoomDistance + 1, -zoomDistance - 1);
-				glMatrixMode(GL_MODELVIEW);
-				glEnable(GL_BLEND);
-				glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-				glDisable(GL_DEPTH_TEST);
-				glShadeModel(GL_SMOOTH);
-				glClearDepth(1);
-
+				RenderMonkey.renderString("v" + ChristmasCrashers.VERSION, 30, 30, font, Color.lightGray); // Render the version string
+				// Render the button highlighting (if any)
 				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.START_GAME.x, NavigationButton.START_GAME.y, NavigationButton.START_GAME.width, NavigationButton.START_GAME.height, NavigationButton.START_GAME.texture, 1.0);
 				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.LEVEL_EDITOR.x, NavigationButton.LEVEL_EDITOR.y, NavigationButton.LEVEL_EDITOR.width, NavigationButton.LEVEL_EDITOR.height, NavigationButton.LEVEL_EDITOR.texture, 1.0);
 				RenderMonkey.renderTransparentTexturedRectangle(NavigationButton.EXIT.x, NavigationButton.EXIT.y, NavigationButton.EXIT.width, NavigationButton.EXIT.height, NavigationButton.EXIT.texture, 1.0);
@@ -230,7 +205,7 @@ public class MainMenuState extends State {
 			}
 		}
 	}
-	
+
 	@Override
 	protected void checkKeyStates() {
 		if (keyDown) {
@@ -242,7 +217,7 @@ public class MainMenuState extends State {
 		}
 		keyDown = false;
 	}
-	
+
 	/**
 	 * Populates the {@link #points} array to begin the starfield animation, and starts the fade-in animation.
 	 */
@@ -251,10 +226,10 @@ public class MainMenuState extends State {
 			System.out.println("Initializing MainMenu state.");
 		Random random = new Random();
 		for (int i = 0; i < points.length; i++)
-			points[i] = new Point((random.nextFloat() - 0.5f) * 100f, (random.nextFloat() - 0.5f) * 100f, random.nextInt(200) - (300 + zoomDistance));
+			points[i] = new Point((random.nextFloat() - 0.5f) * 100f, (random.nextFloat() - 0.5f) * 100f, random.nextInt(200) - (300 + (float) GLGuru.getZDisplacement()));
 		animationProgress = 0;
 	}
-	
+
 	/**
 	 * Represents a point (star) in the starfield animation.
 	 * 
@@ -267,17 +242,17 @@ public class MainMenuState extends State {
 		 * The x-coordinate of the point in the 3D animation frame
 		 */
 		float x;
-		
+
 		/**
 		 * The y-coordinate of the point in the 3D animation frame
 		 */
 		float y;
-		
+
 		/**
 		 * The z-coordinate of the point in the 3D animation frame
 		 */
 		float z;
-		
+
 		/**
 		 * Constructs the point object to display at the given location.
 		 * 
@@ -291,7 +266,7 @@ public class MainMenuState extends State {
             this.z = z;
         }
     }
-	
+
 	/**
 	 * Enum containing all the navigation buttons that can be selected via mouse and, for each button, the dimensional
 	 * attributes and Texture object used to render the button.
@@ -304,32 +279,32 @@ public class MainMenuState extends State {
 		LEVEL_EDITOR(ChristmasCrashers.getWindowWidth() / 2 - 90, ChristmasCrashers.getWindowHeight() / 2 - 25, 180, 50, textures.get(1)),
 		EXIT(ChristmasCrashers.getWindowWidth() / 2 - 10, ChristmasCrashers.getWindowHeight() / 2 - 95, 180, 50, textures.get(0)),
 		NONE(0, 0, 0, 0, null);
-		
+
 		/**
 		 * The pixel x-coordinate of the bottom left corner of the button within the game window
 		 */
 		private final double x;
-		
+
 		/**
 		 * The pixel y-coordinate of the bottom left corner of the button within the game window
 		 */
 		private final double y;
-		
+
 		/**
 		 * The width, in pixels, of the button (does not have to be the width of the Texture used for the button)
 		 */
 		private final double width;
-		
+
 		/**
 		 * The height, in pixels, of the button (does not have to be the height of the Texture used for the button)
 		 */
 		private final double height;
-		
+
 		/**
 		 * The Texture object that contains the image displayed on the button
 		 */
 		private final Texture texture;
-		
+
 		/**
 		 * Constructor - sets the button's dimensional attributes and Texture to the supplied values and Texture object.
 		 * 
@@ -346,7 +321,7 @@ public class MainMenuState extends State {
 			this.height = height;
 			this.texture = texture;
 		}
-		
+
 		/**
 		 * Returns true iff the point defined by the provided coordinates falls within the bounds of the button rectangle.
 		 * 

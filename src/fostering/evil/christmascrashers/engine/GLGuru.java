@@ -27,6 +27,21 @@ import fostering.evil.christmascrashers.ChristmasCrashers;
 public class GLGuru {
 
 	/**
+	 * How far to the right (positive) or left (negative) the camera is panned
+	 */
+	private static double xDisplacement;
+	
+	/**
+	 * How far up (positive) or down (negative) the camera is panned
+	 */
+	private static double yDisplacement;
+	
+	/**
+	 * How far in (positive) or out (negative) the camera is zoomed
+	 */
+	private static double zDisplacement;
+	
+	/**
 	 * Sets up openGL for 2D graphics using glOrtho with the current game window width and height as dimensions.
 	 */
 	public static void initGL2D() {
@@ -42,7 +57,7 @@ public class GLGuru {
 	public static void initGL2D(int width, int height) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, width, 0, height, 1, -1);
+		glOrtho(xDisplacement, xDisplacement + width, yDisplacement, yDisplacement + height, zDisplacement + 1, zDisplacement - 1);
 		glMatrixMode(GL_MODELVIEW);
 		
 		glEnable(GL_BLEND);
@@ -72,5 +87,50 @@ public class GLGuru {
 		gluPerspective((float) 30, width / height, 0.001f, 300);
         glMatrixMode(GL_MODELVIEW);
         glEnable(GL_DEPTH_TEST);
+	}
+	
+	/**
+	 * @return The current {@link #xDisplacement}
+	 */
+	public static double getXDisplacement() {
+		return xDisplacement;
+	}
+
+	/**
+	 * Sets the current {@link #xDisplacement} supplied value
+	 * @param displacement
+	 */
+	public static void setXDisplacement(double displacement) {
+		xDisplacement = displacement;
+	}
+	
+	/**
+	 * @return The current {@link #yDisplacement}
+	 */
+	public static double getYDisplacement() {
+		return yDisplacement;
+	}
+
+	/**
+	 * Sets the current {@link #yDisplacement} supplied value
+	 * @param displacement
+	 */
+	public static void setYDisplacement(double displacement) {
+		yDisplacement = displacement;
+	}
+
+	/**
+	 * @return The current {@link #zDisplacement}
+	 */
+	public static double getZDisplacement() {
+		return zDisplacement;
+	}
+
+	/**
+	 * Sets the current {@link #zDisplacement} supplied value
+	 * @param displacement
+	 */
+	public static void setZDisplacement(double displacement) {
+		zDisplacement = displacement;
 	}
 }
