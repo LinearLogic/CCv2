@@ -26,7 +26,7 @@ public class WorldManager {
 		if (containsLoadedWorlds())
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("[Warning] LoadWorldsTask is overwriting one or more currently loaded worlds.");
-		// start loading thread
+		new Thread(new LoadWorldsTask(worlds)).start();
 	}
 
 	/**
@@ -42,7 +42,8 @@ public class WorldManager {
 		if (worlds[ID] != null)
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("[Warning] LoadWorldsTask is overwriting world " + ID + ".");
-		// start loading thread
+		World[] worldsToLoad = {new World(ID)};
+		new Thread(new LoadWorldsTask(worldsToLoad)).start();
 	}
 
 	/**
@@ -54,7 +55,7 @@ public class WorldManager {
 				System.out.println("Cancelling the SaveWorldTask - there are no loaded worlds.");
 			return;
 		}
-		// start saving thread
+		new Thread(new SaveWorldsTask(worlds)).start();
 	}
 
 	/**
@@ -73,7 +74,8 @@ public class WorldManager {
 				System.err.println("Failed to save world " + ID + " - world does not exist.");
 			return;
 		}
-		// start saving thread
+		World[] worldsToSave = {worlds[ID]};
+		new Thread(new SaveWorldsTask(worldsToSave)).start();
 	}
 
 	/**

@@ -1,6 +1,9 @@
 package ss.linearlogic.christmascrashers.world;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 
@@ -65,6 +68,19 @@ public class Level {
 	public void save() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Saving level " + ID + " in world " + worldID + ".");
+		File dataFile = new File(getDiskLocation());
+		if (dataFile.exists())
+			dataFile.mkdirs();
+		FileWriter fw = null;
+		try {
+			fw = new FileWriter(getDiskLocation());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if (fw == null)
+			return;
+		PrintWriter pw = new PrintWriter(fw);
 		// TODO: write data to the file
 	}
 
@@ -89,7 +105,7 @@ public class Level {
 		return worldID;
 	}
 
-//	Currently disabled, as levels should not be moved from world to worlde
+//	Currently disabled, as levels should not be moved from world to world
 //	/**
 //	 * Sets the {@link #worldID} to the supplied value
 //	 * @param ID

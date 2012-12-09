@@ -49,18 +49,17 @@ public class World {
 		File worldDir = new File(getDiskLocation());
 		if (!worldDir.exists()) {
 			if (ChristmasCrashers.isDebugModeEnabled())
-				System.out.println("World \"" + ID + "\" does not exist, creating it. System path to world directory: ..files" + File.separator + "worlds" + File.separator + "world" + ID);
+				System.out.println("World " + ID + " does not exist, creating it. System path to world directory: .." + getDiskLocation());
 			worldDir.mkdirs();
 			return;
 		}
 		for (File levelFile : worldDir.listFiles()) { // Iterate through files in the world folder, only loading the ones that match the level file format
-			if (levelFile.getName().length() == 6 && levelFile.getName().substring(0, 4).equalsIgnoreCase("level")) {
+			if (levelFile.getName().length() == 6 && levelFile.getName().substring(0, 4).equalsIgnoreCase("level"))
 				if (Character.isDigit(levelFile.getName().charAt(5))) {
 					int levelID = Character.getNumericValue(levelFile.getName().charAt(5));
 					if (levelID >= 0 && levelID <= 4) { // in range
-						levels[levelID] = new Level(this.ID, Character.getNumericValue(levelFile.getName().charAt(5)));
+						levels[levelID] = new Level(this.ID, levelID);
 				}
-			}
 		}
 		if (!containsLoadedLevels()) {
 			if (ChristmasCrashers.isDebugModeEnabled())
