@@ -1,5 +1,7 @@
 package ss.linearlogic.christmascrashers.world;
 
+import java.util.ArrayList;
+
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 
 /**
@@ -131,7 +133,14 @@ public class WorldManager {
 				System.out.println("Cancelling DeleteWorldsTask - there are no loaded worlds.");
 			return;
 		}
-		// Start delete thread
+		ArrayList<World> worldsToDelete = new ArrayList<World>();
+		
+		for (World w : worlds)
+			if (w != null)
+				worldsToDelete.add(w);
+		new Thread(new DeleteWorldsTask((World[]) worldsToDelete.toArray())).start();
+		for (World w : worldsToDelete)
+			worlds[w.getID()] = null;
 	}
 
 	/**
@@ -150,9 +159,8 @@ public class WorldManager {
 				System.err.println("Failed to delete world " + ID + " - world does not exist.");
 			return;
 		}
-			// TODO: create file util class with recursive delete method
-			// TODO: create DeleteWorldTask
-			// TODO: run DeleteWorldTask thread
+		World[] worldsToDelete = {worlds[ID]};
+		new Thread(new DeleteWorldsTask(worldsToDelete)).start();
 		worlds[ID] = null;
 	}
 
