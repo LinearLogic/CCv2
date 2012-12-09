@@ -1,5 +1,9 @@
 package ss.linearlogic.christmascrashers.world;
 
+import java.io.File;
+
+import ss.linearlogic.christmascrashers.ChristmasCrashers;
+
 /**
  * Levels are what the player moves through and contain a 2D array of blocks and entities, with which the player
  * interacts while travelling around the level. All levels are fixed size, namely 640 by 320 tiles.
@@ -28,14 +32,42 @@ public class Level {
 	private int ID;
 
 	/**
-	 * Constructor - creates a Level object with the given ID. The level's contents are not loaded separately, by
-	 * calling the load() method (if the level is being made from scratch in the Level Editor, this call will not be made).
-	 * 
-	 * @param ID
+	 * The ID of the world the level belongs to
 	 */
-	public Level(int ID) {
+	private int worldID;
+
+	// TODO: Add 2D array of blocks
+
+	/**
+	 * Constructor - creates a Level object with the given world name and ID. The level's contents are not loaded separately, by
+	 * calling the {@link #load()} method (if the level is being made from scratch in the Level Editor, this call will not be made).
+	 * 
+	 * @param worldID The ID of the world the level will belong to
+	 * @param ID The level's unique {@link #ID} value
+	 */
+	public Level(int worldID, int ID) {
+		this.worldID = worldID;
 		this.ID = ID;
 	}
+
+	/**
+	 * Loads the level file and reads from it to load the level's 2D array of blocks and entities.
+	 */
+	public void load() {
+		if (ChristmasCrashers.isDebugModeEnabled() )
+			System.out.println("Loading level " + ID + " in world " + worldID + ".");
+		// TODO: load data from the file
+	}
+
+	/**
+	 * Saves the level, in its current state, to its system data file
+	 */
+	public void save() {
+		if (ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("Saving level " + ID + " in world " + worldID + ".");
+		// TODO: write data to the file
+	}
+
 	/**
 	 * @return The {@link ID} value of the level
 	 */
@@ -48,5 +80,28 @@ public class Level {
 	 */
 	public void setID(int ID) {
 		this.ID = ID;
+	}
+
+	/**
+	 * @return The ID of the world the level belongs to
+	 */
+	public int getWorldID() {
+		return worldID;
+	}
+
+//	Currently disabled, as levels should not be moved from world to worlde
+//	/**
+//	 * Sets the {@link #worldID} to the supplied value
+//	 * @param ID
+//	 */
+//	public void setWorldID(int ID) {
+//		this.worldID = ID;
+//	}
+
+	/**
+	 * @return The {@link #diskLocation} of the level's data file
+	 */
+	public String getDiskLocation() {
+		return "files" + File.separator + "world" + worldID + File.separator + "level" + ID;
 	}
 }

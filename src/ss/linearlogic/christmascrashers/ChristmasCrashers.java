@@ -1,8 +1,6 @@
 package ss.linearlogic.christmascrashers;
 
-import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.*;
 
 import java.util.Scanner;
 
@@ -22,14 +20,14 @@ import ss.linearlogic.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.2.1
+ * @version 0.2.2
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.1.6";
+	public static final String VERSION = "0.2.2";
 
 	/**
 	 * Indicates whether the program is running in debug mode

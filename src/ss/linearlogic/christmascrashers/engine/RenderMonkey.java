@@ -217,31 +217,31 @@ public class RenderMonkey {
 	/**
 	 * Renders a string in white.
 	 * 
-	 * @param string The contents of the string
+	 * @param message The contents of the string
 	 * @param x X-coordinate of the top lefthand corner of the string (pixel location within the rendering window)
 	 * @param y Y-coordinate of the top lefthand corner of the string (pixel location within the rendering window)
 	 * @param font Font type of the string
 	 */
-	public static void renderString(String string, double x, double y, TrueTypeFont font) {		
-		renderString(string, x, y, font, Color.white);
+	public static void renderString(String message, double x, double y, TrueTypeFont font) {		
+		renderString(message, x, y, font, Color.white);
 	}
 
 	/**
 	 * Render a string in the color supplied.
 	 * 
-	 * @param string The contents of the string
+	 * @param message The contents of the string
 	 * @param x X-coordinate of the top lefthand corner of the string (pixel location within the rendering window)
 	 * @param y Y-coordinate of the top lefthand corner of the string (pixel location within the rendering window)
 	 * @param font Font type of the string
 	 * @param color The color in which to display the string
 	 */
-	public static void renderString(String string, double x, double y, TrueTypeFont font, Color color) {
+	public static void renderString(String message, double x, double y, TrueTypeFont font, Color color) {
 		TextureImpl.bindNone();
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(GLGuru.getXDisplacement(), GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight() - GLGuru.getYDisplacement(), -GLGuru.getYDisplacement(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
 		glMatrixMode(GL_MODELVIEW);
-		font.drawString((int) x, (int) (ChristmasCrashers.getWindowHeight() - y - font.getHeight()), string, color);
+		font.drawString((int) x, (int) (ChristmasCrashers.getWindowHeight() - y - font.getHeight()), message, color);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
 		glOrtho(GLGuru.getXDisplacement(), GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth(), GLGuru.getYDisplacement(), GLGuru.getYDisplacement() + ChristmasCrashers.getWindowHeight(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);

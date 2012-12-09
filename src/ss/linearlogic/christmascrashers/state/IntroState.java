@@ -123,4 +123,19 @@ public class IntroState extends State {
 			// Start world loading thread here
 		}
 	}
+
+	/**
+	 * @return The state of the {@link #animationComplete} flag
+	 */
+	public static boolean isAnimationComplete() {
+		return animationComplete;
+	}
+
+	/**
+	 * Sets the {@link #animationComplete} flag to the provided value.
+	 * @param complete
+	 */
+	public static void setAnimationComplete(boolean complete) {
+		animationComplete = complete;
+	}
 }
