@@ -85,7 +85,6 @@ public class World {
 		}
 		for (Level l : levels)
 			l.save();
-		// TODO: save world settings?
 	}
 
 	/**

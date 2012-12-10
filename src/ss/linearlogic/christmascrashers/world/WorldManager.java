@@ -25,10 +25,13 @@ public class WorldManager {
 	 * This method is run in a thread of its own so as to prevent a performance bottleneck.
 	 */
 	public static void loadWorlds() {
-		if (containsLoadedWorlds())
-			if (ChristmasCrashers.isDebugModeEnabled())
-				System.out.println("[Warning] LoadWorldsTask is overwriting one or more currently loaded worlds.");
-		new Thread(new LoadWorldsTask(worlds)).start();
+		if (containsLoadedWorlds() && ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("[Warning] LoadWorldsTask is overwriting one or more currently loaded worlds.");
+		for (int i = 0; i < 5; i++) {
+			if (worlds[i] == null)
+				worlds[i] = new World(i);
+			worlds[i].load();
+		}
 	}
 
 	/**
@@ -41,10 +44,13 @@ public class WorldManager {
 				System.err.println("Failed to load world " + ID + " - invalid world ID (must be between 0 and 4, inclusive).");
 			return;
 		}
-		if (worlds[ID] != null)
+		if (worlds[ID] != null) {
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("[Warning] LoadWorldsTask is overwriting world " + ID + ".");
-		World[] worldsToLoad = {new World(ID)};
+		} else {
+			worlds[ID] = new World(ID);
+		}
+		World[] worldsToLoad = {worlds[ID]};
 		new Thread(new LoadWorldsTask(worldsToLoad)).start();
 	}
 

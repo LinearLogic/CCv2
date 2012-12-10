@@ -9,7 +9,7 @@ import java.io.OutputStream;
 
 /**
  * The FileMonkey provides methods for various file operations, such as recursive deleting of folders and files.
- * As with the RenderMonkey, the FileMonkey responds best to bananas.
+ * As with the RenderMonkey and TextureMonkey, the FileMonkey responds best to bananas.
  * 
  * @author LinearLogic
  * @since 0.2.4

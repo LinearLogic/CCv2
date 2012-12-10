@@ -8,6 +8,7 @@ package ss.linearlogic.christmascrashers.state;
  * @since 0.0.2
  */
 public enum StateType {
+
 	/**
 	 * The flag for the {@link IntroState}
 	 */

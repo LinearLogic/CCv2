@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
+import ss.linearlogic.christmascrashers.object.Object;
+import ss.linearlogic.christmascrashers.object.ObjectType;
 
 /**
  * Levels are what the player moves through and contain a 2D array of blocks and entities, with which the player
@@ -39,7 +41,10 @@ public class Level {
 	 */
 	private int worldID;
 
-	// TODO: Add 2D array of blocks
+	/**
+	 * A 2D Array of all the in-game {@link Object objects}
+	 */
+	private Object[][] objects = new Object[WIDTH][HEIGHT];
 
 	/**
 	 * Constructor - creates a Level object with the given world name and ID. The level's contents are not loaded separately, by
@@ -49,6 +54,11 @@ public class Level {
 	 * @param ID The level's unique {@link #ID} value
 	 */
 	public Level(int worldID, int ID) {
+		for (int i = 0; i < WIDTH; i++) {
+			for (int j = 0; j < HEIGHT; j++) {
+				objects[i][j] = new Object(ObjectType.AIR);
+			}
+		}
 		this.worldID = worldID;
 		this.ID = ID;
 	}

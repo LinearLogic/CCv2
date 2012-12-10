@@ -20,14 +20,14 @@ import ss.linearlogic.christmascrashers.state.StateType;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.2.4
+ * @version 0.2.5
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.2.4";
+	public static final String VERSION = "0.2.5";
 
 	/**
 	 * Indicates whether the program is running in debug mode
