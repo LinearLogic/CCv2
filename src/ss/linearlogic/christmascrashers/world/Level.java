@@ -1,9 +1,11 @@
 package ss.linearlogic.christmascrashers.world;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Scanner;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.object.Object;
@@ -54,22 +56,44 @@ public class Level {
 	 * @param ID The level's unique {@link #ID} value
 	 */
 	public Level(int worldID, int ID) {
-		for (int i = 0; i < WIDTH; i++) {
-			for (int j = 0; j < HEIGHT; j++) {
-				objects[i][j] = new Object(ObjectType.AIR);
-			}
-		}
 		this.worldID = worldID;
 		this.ID = ID;
+		for (int i = 0; i < WIDTH; i++) {
+			for (int j = 0; j < HEIGHT; j++) {
+				objects[i][j] = new Object(this, i, j, ObjectType.AIR);
+			}
+		}
 	}
 
 	/**
 	 * Loads the level file and reads from it to load the level's 2D array of blocks and entities.
 	 */
 	public void load() {
-		if (ChristmasCrashers.isDebugModeEnabled() )
+		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Loading level " + ID + " in world " + worldID + ".");
-		// TODO: load data from the file
+		File dataFile = new File(getDiskLocation());
+		if (!dataFile.exists())
+			dataFile.mkdirs();
+		Scanner sc = null;
+		try {
+			sc = new Scanner(dataFile);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		if (sc == null)
+			return;
+		for (int i = 0; i < WIDTH; i++) {
+			String dataLine = sc.nextLine();
+			for (int j = 0; j < HEIGHT; j++) {
+				if (j >= dataLine.length())
+					break;
+				ObjectType type = ObjectType.getTypeFromDataChar(dataLine.charAt(j));
+				if (type.equals(ObjectType.AIR))
+					continue;
+				objects[i][j] = new Object(this, i, j, type);
+			}
+		}
+		
 	}
 
 	/**
@@ -79,19 +103,30 @@ public class Level {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Saving level " + ID + " in world " + worldID + ".");
 		File dataFile = new File(getDiskLocation());
-		if (dataFile.exists())
+		if (!dataFile.exists())
 			dataFile.mkdirs();
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(getDiskLocation());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		if (fw == null)
 			return;
 		PrintWriter pw = new PrintWriter(fw);
-		// TODO: write data to the file
+		// Write data to the file using the PrintWriter
+		for (int i = 0; i < WIDTH; i++) {
+			StringBuilder sb = new StringBuilder();
+			for (int j = 0; j < HEIGHT; j++)
+				sb.append(objects[i][j].getType().getDataChar());
+			pw.println(sb.toString());
+		}
+		pw.close();
+		try {
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/**

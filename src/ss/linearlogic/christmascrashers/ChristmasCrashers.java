@@ -15,19 +15,20 @@ import ss.linearlogic.christmascrashers.state.IntroState;
 import ss.linearlogic.christmascrashers.state.MainMenuState;
 import ss.linearlogic.christmascrashers.state.State;
 import ss.linearlogic.christmascrashers.state.StateType;
+import ss.linearlogic.christmascrashers.world.WorldManager;
 
 /**
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.2.5
+ * @version 0.2.6
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.2.5";
+	public static final String VERSION = "0.2.6";
 
 	/**
 	 * Indicates whether the program is running in debug mode
@@ -110,7 +111,8 @@ public class ChristmasCrashers {
 				running = false;
 		}
 		if (debugModeEnabled)
-			System.out.println("Destroying the openGL context and closing the game window.");
+			System.out.println("Received quit command - saving worlds, destroying the openGL context and closing the game window.");
+		WorldManager.saveWorlds();
 		Display.destroy();
 		System.exit(0);
 	}

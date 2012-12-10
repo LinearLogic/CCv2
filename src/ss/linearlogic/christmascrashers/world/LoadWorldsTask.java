@@ -25,6 +25,11 @@ public class LoadWorldsTask implements Runnable {
 		for (World w : this.worldsToLoad) { // Load the detected worlds
 			w.load();
 		}
+		try {
+			Thread.sleep(5000); // Just to make things look realistic ;-)
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
 		if (!IntroState.isAnimationComplete())
 			IntroState.setAnimationComplete(true); // Move on from the loading screen splash
 	}

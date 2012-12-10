@@ -11,6 +11,7 @@ import org.newdawn.slick.util.ResourceLoader;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.engine.RenderMonkey;
+import ss.linearlogic.christmascrashers.world.WorldManager;
 
 /**
  * The introduction state is entered first. While active, it runs the loading animation, and then prompts
@@ -48,12 +49,6 @@ public class IntroState extends State {
 	private double transparencyLevel;
 
 	/**
-	 * Represents the state of the game worlds: 'true' if they have all been loaded, otherwise 'false'.
-	 * If this value is true, the world-loader thread will not be called in the {@link #initialize()} method.
-	 */
-	static boolean worldsLoaded;
-
-	/**
 	 * Constructor - loads intro textures, sets the {@link #fadeFrequency}, initializes the {@link #finishedLoading} and {@link State#keyDown} values to 'false',
 	 * and populates the {@link State#importantKeys} ArrayList. Note that the splash animation and
 	 * game-loader thread are not started here, but in the {@link #initialize()} method.
@@ -77,14 +72,11 @@ public class IntroState extends State {
 		keyDown = false;
 		addImportantKey(Keyboard.KEY_RETURN);
 		animationComplete = false;
-		worldsLoaded = false; // TODO: change this value to the worldsLoaded value in the world manager class
 	}
 
 	@Override
 	public StateType handleInput() {
 		checkKeyStates();
-		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !animationComplete)
-			animationComplete = true;
 		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN) && animationComplete && !keyDown) { // Animation is complete
 			MainMenuState.setKeyDown(true);
 			if (ChristmasCrashers.isDebugModeEnabled())
@@ -119,9 +111,7 @@ public class IntroState extends State {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing Intro state.");
 		animationComplete = false;
-		if (!worldsLoaded) {
-			// Start world loading thread here
-		}
+		WorldManager.loadWorlds();
 	}
 
 	/**

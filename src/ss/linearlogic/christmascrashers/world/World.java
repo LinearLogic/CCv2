@@ -50,7 +50,7 @@ public class World {
 		if (!worldDir.exists()) {
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("World " + ID + " does not exist, creating it. System path to world directory: .." + getDiskLocation());
-			worldDir.mkdirs();
+			worldDir.mkdir();
 			return;
 		}
 		for (File levelFile : worldDir.listFiles()) { // Iterate through files in the world folder, only loading the ones that match the level file format
@@ -69,7 +69,6 @@ public class World {
 		for (Level l : levels)
 			l.load();
 		}
-		// TODO: load world settings?
 	}
 
 	/**
@@ -129,6 +128,7 @@ public class World {
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("[Warning] Overwriting level " + level.getID() + " in world " + ID + ".");
 		levels[level.getID()] = level;
+		level.load();
 	}
 
 	/**
@@ -178,6 +178,6 @@ public class World {
 	 * @return The system path to the world folder
 	 */
 	public String getDiskLocation() {
-		return "files" + File.separator + "world" + ID;
+		return "files" + File.separator + "worlds" + File.separator + "world" + ID;
 	}
 }

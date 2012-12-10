@@ -30,8 +30,8 @@ public class WorldManager {
 		for (int i = 0; i < 5; i++) {
 			if (worlds[i] == null)
 				worlds[i] = new World(i);
-			worlds[i].load();
 		}
+		new Thread(new LoadWorldsTask(worlds)).start();
 	}
 
 	/**
@@ -128,6 +128,7 @@ public class WorldManager {
 				System.out.println("[Warning] Overwriting world " + world.getID() + ".");
 		}
 		worlds[world.getID()] = world;
+		world.load();
 	}
 
 	/**
