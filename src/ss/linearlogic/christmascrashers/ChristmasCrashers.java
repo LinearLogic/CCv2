@@ -23,14 +23,14 @@ import ss.linearlogic.christmascrashers.util.TextureMonkey;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.2.7
+ * @version 0.3.1
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.2.7";
+	public static final String VERSION = "0.3.1";
 
 	/**
 	 * Indicates whether the program is running in debug mode

@@ -59,7 +59,7 @@ public class MainMenuState extends State {
 	 * The {@link NavigationButton} currently selected by the mouse (NONE if the mouse isn't hovering over one of
 	 * the navigation buttons)
 	 */
-	private NavigationButton selectedButton;
+	private static NavigationButton selectedButton;
 
 	/**
 	 * The font used in the MainMenu screen (for the version, etc.)
@@ -81,7 +81,6 @@ public class MainMenuState extends State {
 			System.err.println("Failed to load texture(s) for the MainMenu state!");
 			e.printStackTrace();
 		}
-		selectedButton = NavigationButton.NONE;
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Loading fonts for the MainMenu state.");
 		font = RenderMonkey.loadFont("files" + File.separator + "FIXEDSYS500C.TTF", 30);
@@ -89,7 +88,7 @@ public class MainMenuState extends State {
 			System.out.println("Initializing MainMenu state variables.");
 		keyDown = false;
 		zoomSpeed = 1.1f;
-		animationSpeed = 8000;
+		animationSpeed = 7000;
 		animationProgress = 1000;
 		selectedButton = NavigationButton.NONE;
 	}
@@ -113,8 +112,8 @@ public class MainMenuState extends State {
 			keyDown = true;
 			switch(selectedButton) {
 				case START_GAME:
-					// start the game, dummy!
-					break;
+					GameState.initialize();
+					return StateType.GAME;
 				case LEVEL_EDITOR:
 					System.out.println("COMING SOON!");
 					break;
@@ -136,6 +135,7 @@ public class MainMenuState extends State {
 
 	@Override
 	public void draw() {
+		System.out.println(animationProgress);
 		if (points[0] != null) { // Only render things if the starfield animation has been initialized
 			// Switch into 3D mode (gluPerspective)
 			GLGuru.initGL3D();
@@ -220,15 +220,25 @@ public class MainMenuState extends State {
 	}
 
 	/**
-	 * Populates the {@link #points} array to begin the starfield animation, and starts the fade-in animation.
+	 * Populates the {@link #points} array to begin the starfield animation, and starts the fade-in animation
+	 * if the runFadeInAnimation flag is 'true'.
+	 * 
+	 * @param runFadeInAnimation Whether to run the fade-in sequence or to skip to the clickable menu
 	 */
-	public static void initialize() {
+	public static void initialize(boolean runFadeInAnimation) {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing MainMenu state.");
+		selectedButton = NavigationButton.NONE;
+		glTranslated(-GLGuru.getXDisplacement(), -GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
+		GLGuru.setXDisplacement(0);
+		GLGuru.setYDisplacement(0);
+		GLGuru.setZDisplacement(0);
 		Random random = new Random();
 		for (int i = 0; i < points.length; i++)
 			points[i] = new Point((random.nextFloat() - 0.5f) * 100f, (random.nextFloat() - 0.5f) * 100f, random.nextInt(200) - (300 + (float) GLGuru.getZDisplacement()));
 		animationProgress = 0;
+		if (!runFadeInAnimation)
+			animationProgress = 1000; // Skip the fade-in animation entirely
 	}
 
 	/**

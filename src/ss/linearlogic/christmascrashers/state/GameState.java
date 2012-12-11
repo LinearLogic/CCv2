@@ -1,6 +1,11 @@
 package ss.linearlogic.christmascrashers.state;
 
-import java.util.ArrayList;
+import static org.lwjgl.opengl.GL11.glTranslated;
+
+import org.lwjgl.input.Keyboard;
+
+import ss.linearlogic.christmascrashers.engine.GLGuru;
+import ss.linearlogic.christmascrashers.world.Level;
 
 /**
  * The game state is where most of the user's time is spent, and includes handling of all relevant forms
@@ -11,11 +16,30 @@ import java.util.ArrayList;
  */
 public class GameState extends State {
 
-	ArrayList<Integer> importantKeys = new ArrayList<Integer>();
+	/**
+	 * The {@link Level} to move the player around and render
+	 */
+	private Level currentLevel;
+
+	/**
+	 * Constructor - adds the {@link #importantKeys}
+	 */
+	public GameState() {
+		importantKeys.add(Keyboard.KEY_UP);
+		importantKeys.add(Keyboard.KEY_RIGHT);
+		importantKeys.add(Keyboard.KEY_LEFT);
+		importantKeys.add(Keyboard.KEY_ESCAPE);
+	}
+
 	@Override
 	public StateType handleInput() {
-		// TODO: keyboard handling
-		return null;
+		// Adjust player's speed accordingly
+		checkKeyStates();
+		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !keyDown) {
+			MainMenuState.initialize(false); // Skip the fade-in animation
+			return StateType.MAIN_MENU;
+		}
+		return StateType.GAME;
 	}
 
 	@Override
@@ -25,6 +49,24 @@ public class GameState extends State {
 
 	@Override
 	public void draw() {
-		
+//		if (currentLevel != null)
+//			currentLevel.draw();
+	}
+
+	/**
+	 * Sets the gamestate to active
+	 */
+	public static void initialize() {
+		glTranslated(-GLGuru.getXDisplacement(), -GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
+		GLGuru.setXDisplacement(0);
+		GLGuru.setYDisplacement(0);
+		GLGuru.setZDisplacement(0);
+	}
+
+	/**
+	 * @return The {@link #currentLevel}
+	 */
+	public Level getCurrentLevel() {
+		return currentLevel;
 	}
 }

@@ -81,7 +81,7 @@ public class IntroState extends State {
 			MainMenuState.setKeyDown(true);
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("Switching to MainMenu state.");
-			MainMenuState.initialize();
+			MainMenuState.initialize(true);
 			return StateType.MAIN_MENU;
 		}
 		return StateType.INTRO;

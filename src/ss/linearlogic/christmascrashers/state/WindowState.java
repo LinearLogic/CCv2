@@ -1,6 +1,7 @@
 package ss.linearlogic.christmascrashers.state;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
+import ss.linearlogic.christmascrashers.state.State;
 
 /**
  * The window state is selected when an in-game window pops up, such as a respawn prompt. While
@@ -17,12 +18,17 @@ public abstract class WindowState extends State {
 	 * rendered and if two windows with the same priority are open, the most recently opened window will
 	 * be rendered (this is determined based on each window's time of {@link #birth time of birth}.
 	 */
-	protected int priority;
+	protected final int priority;
 
 	/**
 	 * The adjusted system time at which the window object was created.
 	 */
-	protected long birth;
+	protected final long timeStamp;
+
+	/**
+	 * Whether or not the window is active (handling input and being rendered)
+	 */
+	protected boolean active;
 
 	/**
 	 * WindowState superclass constructor - sets the {@link #priority} of the window object to the specified integer
@@ -31,6 +37,36 @@ public abstract class WindowState extends State {
 	 */
 	public WindowState(int priority) {
 		this.priority = priority;
-		birth = ChristmasCrashers.getTime();
+		timeStamp = ChristmasCrashers.getTime();
+	}
+
+	/**
+	 * @return The window's {@link #priority} of other windows
+	 */
+	public int getPriority() {
+		return priority;
+	}
+
+	/**
+	 * @return The adjusted system time at which the window object was created
+	 */
+	public long getTimeStamp() {
+		return timeStamp;
+	}
+
+	/**
+	 * @return Whether the window is {@link #active}
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * Sets whether the window is {@link #active}
+	 * 
+	 * @param active
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }
