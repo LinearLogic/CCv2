@@ -50,14 +50,14 @@ public class World {
 		if (!worldDir.exists()) {
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("World " + ID + " does not exist, creating it. System path to world directory: .." + getDiskLocation());
-			worldDir.mkdir();
+			worldDir.mkdirs();
 			return;
 		}
 		for (File levelFile : worldDir.listFiles()) { // Iterate through files in the world folder, only loading the ones that match the level file format
-			if (levelFile.getName().length() == 6 && levelFile.getName().substring(0, 4).equalsIgnoreCase("level"))
+			if (levelFile.getName().length() == 9 && levelFile.getName().substring(0, 5).equalsIgnoreCase("level"))
 				if (Character.isDigit(levelFile.getName().charAt(5))) {
 					int levelID = Character.getNumericValue(levelFile.getName().charAt(5));
-					if (levelID >= 0 && levelID <= 4) { // in range
+					if (levelID >= 0 && levelID <= 4) // in range
 						levels[levelID] = new Level(this.ID, levelID);
 				}
 		}
@@ -67,9 +67,10 @@ public class World {
 			return;
 		}
 		for (Level l : levels)
-			l.load();
-		}
+			if (l != null)
+				l.load();
 	}
+	
 
 	/**
 	 * {@link Level#save() Saves} each of the levels in the world, writing their data to the disk.
@@ -83,7 +84,8 @@ public class World {
 			return;
 		}
 		for (Level l : levels)
-			l.save();
+			if (l != null)
+				l.save();
 	}
 
 	/**

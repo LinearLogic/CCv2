@@ -1,6 +1,8 @@
 package ss.linearlogic.christmascrashers;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
 
 import java.util.Scanner;
 
@@ -15,20 +17,20 @@ import ss.linearlogic.christmascrashers.state.IntroState;
 import ss.linearlogic.christmascrashers.state.MainMenuState;
 import ss.linearlogic.christmascrashers.state.State;
 import ss.linearlogic.christmascrashers.state.StateType;
-import ss.linearlogic.christmascrashers.world.WorldManager;
+import ss.linearlogic.christmascrashers.util.TextureMonkey;
 
 /**
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.2.6
+ * @version 0.2.7
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.2.6";
+	public static final String VERSION = "0.2.7";
 
 	/**
 	 * Indicates whether the program is running in debug mode
@@ -93,6 +95,7 @@ public class ChristmasCrashers {
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
 		GLGuru.initGL2D(windowWidth, windowHeight);
+		TextureMonkey.init();
 		state = StateType.INTRO;
 		loadStates();
 		initTimer();
@@ -111,8 +114,7 @@ public class ChristmasCrashers {
 				running = false;
 		}
 		if (debugModeEnabled)
-			System.out.println("Received quit command - saving worlds, destroying the openGL context and closing the game window.");
-		WorldManager.saveWorlds();
+			System.out.println("Received quit command - destroying the openGL context and closing the game window.");
 		Display.destroy();
 		System.exit(0);
 	}

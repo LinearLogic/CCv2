@@ -66,45 +66,74 @@ public class Level {
 	}
 
 	/**
-	 * Loads the level file and reads from it to load the level's 2D array of blocks and entities.
+	 * Loads the level file (creating it if it doesn't exist) and reads from it to load the level's 2D array of blocks and entities.
 	 */
 	public void load() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Loading level " + ID + " in world " + worldID + ".");
 		File dataFile = new File(getDiskLocation());
-		if (!dataFile.exists())
+		if (!dataFile.exists()) {
+			if (ChristmasCrashers.isDebugModeEnabled())
+				System.out.println("Data file for level " + ID + " in world " + worldID + " does not exist - creating it now.");
 			dataFile.mkdirs();
+			try {
+				dataFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.err.println("Failed to save level " + ID + " in world" + worldID + " - could not create data file.");
+				return;
+			}
+		}
 		Scanner sc = null;
 		try {
-			sc = new Scanner(dataFile);
+			sc = new Scanner(new File(getDiskLocation()));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 		if (sc == null)
 			return;
-		for (int i = 0; i < WIDTH; i++) {
+		if (!sc.hasNextLine()) {
+			if (ChristmasCrashers.isDebugModeEnabled())
+				System.out.println("[Warning] The data file for level " + ID + " in world + " + worldID + " is empty.");
+			return;
+		}
+		for (int i = 0; i < HEIGHT; i++) { // WIDTH and HEIGHT are switched to facilitate storage data that a human can read
 			String dataLine = sc.nextLine();
-			for (int j = 0; j < HEIGHT; j++) {
+			for (int j = 0; j < WIDTH; j++) {
 				if (j >= dataLine.length())
 					break;
 				ObjectType type = ObjectType.getTypeFromDataChar(dataLine.charAt(j));
 				if (type.equals(ObjectType.AIR))
 					continue;
-				objects[i][j] = new Object(this, i, j, type);
+				objects[j][i] = new Object(this, i, j, type);
 			}
 		}
-		
+		for (int i = 0; i < WIDTH; i++) {
+			for (int j = 0; j < HEIGHT; j++) {
+				if (objects[i][j].getType() != ObjectType.AIR)
+					System.out.println(objects[i][j].getType().toString());
+			}
+		}
 	}
 
 	/**
-	 * Saves the level, in its current state, to its system data file
+	 * Saves the level's 2D Array of {@link Object objects} and entities to the level's data file, creating it if it doesn't exist.
 	 */
 	public void save() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Saving level " + ID + " in world " + worldID + ".");
 		File dataFile = new File(getDiskLocation());
-		if (!dataFile.exists())
+		if (!dataFile.exists()) {
+			System.out.println("Data file for level " + ID + " in world " + worldID + " does not exist - creating it now.");
 			dataFile.mkdirs();
+			try {
+				dataFile.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+				System.err.println("Failed to save level " + ID + " in world" + worldID + " - could not create data file.");
+				return;
+			}
+		}
 		FileWriter fw = null;
 		try {
 			fw = new FileWriter(getDiskLocation());
@@ -114,11 +143,10 @@ public class Level {
 		if (fw == null)
 			return;
 		PrintWriter pw = new PrintWriter(fw);
-		// Write data to the file using the PrintWriter
-		for (int i = 0; i < WIDTH; i++) {
+		for (int i = 0; i < HEIGHT; i++) { // See comment in load() method about WIDTH and HEIGHT being switched
 			StringBuilder sb = new StringBuilder();
-			for (int j = 0; j < HEIGHT; j++)
-				sb.append(objects[i][j].getType().getDataChar());
+			for (int j = 0; j < WIDTH; j++)
+				sb.append(objects[j][i].getType().getDataChar());
 			pw.println(sb.toString());
 		}
 		pw.close();
@@ -150,19 +178,10 @@ public class Level {
 		return worldID;
 	}
 
-//	Currently disabled, as levels should not be moved from world to world
-//	/**
-//	 * Sets the {@link #worldID} to the supplied value
-//	 * @param ID
-//	 */
-//	public void setWorldID(int ID) {
-//		this.worldID = ID;
-//	}
-
 	/**
 	 * @return The {@link #diskLocation} of the level's data file
 	 */
 	public String getDiskLocation() {
-		return "files" + File.separator + "world" + worldID + File.separator + "level" + ID;
+		return "files" + File.separator + "worlds" + File.separator + "world" + worldID + File.separator + "level" + ID + ".ll";
 	}
 }

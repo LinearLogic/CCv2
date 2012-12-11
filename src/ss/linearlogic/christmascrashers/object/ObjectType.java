@@ -1,7 +1,5 @@
 package ss.linearlogic.christmascrashers.object;
 
-import java.io.File;
-
 import org.newdawn.slick.opengl.Texture;
 
 import ss.linearlogic.christmascrashers.util.TextureMonkey;
@@ -17,60 +15,55 @@ public enum ObjectType {
 	/**
 	 * The type for an air tile, which can be passed through and has no texture to render over the background
 	 */
-	AIR(true, null, '0'),
+	AIR(true, '0'),
 	
 	/**
 	 * The type for a stone tile, which cannot be passed through or broken
 	 */
-	STONE(false, TextureMonkey.loadTexture("JPG", "files" + File.separator + "stone.png"), '1'),
+	STONE(false, '1'),
 	
 	/**
 	 * The type for a brick tile, which cannot be passed through but will be able to be broken in the future
 	 */
-	BRICK(false, TextureMonkey.loadTexture("JPG", "files" + File.separator + "stone.png"), '2'),
+	BRICK(false, '2'),
 	
 	/**
 	 * The type for an ice tile, which cannot be passed through and in the future will slow the player's movement
 	 */
-	ICE(false, TextureMonkey.loadTexture("JPG", "files" + File.separator + "stone.png"), '3'),
+	ICE(false, '3'),
 	
 	/**
 	 * The type for a spike tile, which can be passed through but kills the player immediately upon contact
 	 */
-	SPIKE(true, null, '4'), // TODO: find spike image
+	SPIKE(true, '4'), // TODO: find spike image
 	
 	/**
 	 * The type for a portal tile, which can be passed through and teleports the player immediately upon contact
 	 */
-	PORTAL(true, TextureMonkey.loadTexture("JPG", "files" + File.separator + "stone.png"), '5'),
+	PORTAL(true,'5'),
 	
 	/**
 	 * The type for a key tile, which can be passed through and is collected by the player (and is thus removed
 	 * from the level) immediately upon contact.
 	 */
-	KEY(true, TextureMonkey.loadTexture("JPG", "files" + File.separator + "stone.png"), '6'),
+	KEY(true, '6'),
 	
 	/**
 	 * The type for a potion tile, which can be passed through and is used on the player (and is thus removed
 	 * from the level) immediateliy upon contact.
 	 */
-	POTION(true, TextureMonkey.loadTexture("JPG", "files" + File.separator + "stone.png"), '7'),
+	POTION(true, '7'),
 	
 	/**
 	 * The type for a present tile, which can be passed through and is added to the player's inventory (and is thus
 	 * removed from the level) immediately upon contact.
 	 */
-	PRESENT(true, TextureMonkey.loadTexture("JPG", "files" + File.separator + "stone.png"), '8');
+	PRESENT(true, '8');
 
 	/**
 	 * Whether or not the object can be passed through
 	 */
 	final boolean penetrable;
-
-	/**
-	 * The texture of the object's tile
-	 */
-	final Texture texture;
 
 	/**
 	 * The character that represents this type of object in a level data file
@@ -80,9 +73,8 @@ public enum ObjectType {
 	/**
 	 * @param penetrable
 	 */
-	ObjectType(boolean penetrable, Texture texture, char dataChar) {
+	ObjectType(boolean penetrable, char dataChar) {
 		this.penetrable = penetrable;
-		this.texture = texture;
 		this.dataChar = dataChar;
 	}
 
@@ -125,7 +117,7 @@ public enum ObjectType {
 	 * @return The texture of the object's tile
 	 */
 	public Texture getTexture() {
-		return texture;
+		return TextureMonkey.getTexture(dataChar);
 	}
 
 	/**
