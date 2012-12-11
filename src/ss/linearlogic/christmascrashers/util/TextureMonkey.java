@@ -26,14 +26,14 @@ public class TextureMonkey {
 	 * Loads the textures included in the body of the method.
 	 */
 	public static void init() {
-		textures.put('1', loadTexture("JPG", "files" + File.separator + "stone.png"));
-		textures.put('2', loadTexture("JPG", "files" + File.separator + "stone.png"));
-		textures.put('3', loadTexture("JPG", "files" + File.separator + "stone.png"));
-		textures.put('4', loadTexture("JPG", "files" + File.separator + "stone.png"));
-		textures.put('5', loadTexture("JPG", "files" + File.separator + "stone.png"));
-		textures.put('6', loadTexture("JPG", "files" + File.separator + "stone.png"));
-		textures.put('7', loadTexture("JPG", "files" + File.separator + "stone.png"));
-		textures.put('8', loadTexture("JPG", "files" + File.separator + "stone.png"));
+		textures.put('1', loadTexture("JPG", "files" + File.separator + "stone.jpg"));
+		textures.put('2', loadTexture("JPG", "files" + File.separator + "brick.jpg"));
+		textures.put('3', loadTexture("JPG", "files" + File.separator + "ice.jpg"));
+		textures.put('4', loadTexture("JPG", "files" + File.separator + "stone.jpg"));
+		textures.put('5', loadTexture("PNG", "files" + File.separator + "portal.png"));
+		textures.put('6', loadTexture("PNG", "files" + File.separator + "key.png"));
+		textures.put('7', loadTexture("PNG", "files" + File.separator + "potion.png"));
+		textures.put('8', loadTexture("PNG", "files" + File.separator + "present.png"));
 	}
 
 	/**
@@ -45,7 +45,7 @@ public class TextureMonkey {
 	public static Texture loadTexture(String format, String pathToTexture) {
 		Texture tex = null;
 		try {
-			tex = TextureLoader.getTexture(format, ResourceLoader.getResourceAsStream("files" + File.separator + "stone.jpg"));
+			tex = TextureLoader.getTexture(format, ResourceLoader.getResourceAsStream(pathToTexture));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

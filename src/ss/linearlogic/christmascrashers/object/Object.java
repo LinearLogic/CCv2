@@ -41,6 +41,9 @@ public class Object implements IObject {
 	 */
 	public Object(Level level, int x, int y, ObjectType type) {
 		this.type = type;
+		this.x = x;
+		this.y = y;
+		this.type = type;
 	}
 
 	public Level getLevel() {

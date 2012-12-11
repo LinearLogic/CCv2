@@ -135,7 +135,6 @@ public class MainMenuState extends State {
 
 	@Override
 	public void draw() {
-		System.out.println(animationProgress);
 		if (points[0] != null) { // Only render things if the starfield animation has been initialized
 			// Switch into 3D mode (gluPerspective)
 			GLGuru.initGL3D();

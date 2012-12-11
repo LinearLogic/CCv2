@@ -8,6 +8,8 @@ import java.io.PrintWriter;
 import java.util.Scanner;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
+import ss.linearlogic.christmascrashers.engine.GLGuru;
+import ss.linearlogic.christmascrashers.engine.RenderMonkey;
 import ss.linearlogic.christmascrashers.object.Object;
 import ss.linearlogic.christmascrashers.object.ObjectType;
 
@@ -66,6 +68,20 @@ public class Level {
 	}
 
 	/**
+	 * Renders the level, drawing all the object tiles within the current camera view
+	 */
+	public void draw() {
+		int leftBound = (int) Math.floor(GLGuru.getXDisplacement() / Object.TILE_SIZE);
+		int rightBound = (int) Math.ceil((GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth()) / Object.TILE_SIZE);
+		int bottomBound = (int) Math.floor(GLGuru.getYDisplacement() / Object.TILE_SIZE);
+		int topBound = (int) Math.ceil((GLGuru.getYDisplacement() + ChristmasCrashers.getWindowHeight()) / Object.TILE_SIZE);
+		for (int i = leftBound; i < rightBound; i++)
+			for (int j = bottomBound; j < topBound; j++)
+				if(objects[i][j].getType().getTexture() != null)
+					RenderMonkey.renderTexturedRectangle(i * Object.TILE_SIZE, j * Object.TILE_SIZE, Object.TILE_SIZE, Object.TILE_SIZE, objects[i][j].getType().getTexture());
+	}
+
+	/**
 	 * Loads the level file (creating it if it doesn't exist) and reads from it to load the level's 2D array of blocks and entities.
 	 */
 	public void load() {
@@ -97,15 +113,17 @@ public class Level {
 				System.out.println("[Warning] The data file for level " + ID + " in world + " + worldID + " is empty.");
 			return;
 		}
-		for (int i = 0; i < HEIGHT; i++) { // WIDTH and HEIGHT are switched to facilitate storage data that a human can read
+		for (int j = HEIGHT - 1; j >= 0; j--) { // i and j appear in an inverted order to ensure that the data file reflects the objects as they appear in the rendered level
+			if (!sc.hasNextLine())
+				break;
 			String dataLine = sc.nextLine();
-			for (int j = 0; j < WIDTH; j++) {
-				if (j >= dataLine.length())
+			for (int i = 0; i < WIDTH; i++) {
+				if (i >= dataLine.length())
 					break;
-				ObjectType type = ObjectType.getTypeFromDataChar(dataLine.charAt(j));
+				ObjectType type = ObjectType.getTypeFromDataChar(dataLine.charAt(i));
 				if (type.equals(ObjectType.AIR))
 					continue;
-				objects[j][i] = new Object(this, i, j, type);
+				objects[i][j] = new Object(this, i, j, type);
 			}
 		}
 		for (int i = 0; i < WIDTH; i++) {
@@ -143,10 +161,10 @@ public class Level {
 		if (fw == null)
 			return;
 		PrintWriter pw = new PrintWriter(fw);
-		for (int i = 0; i < HEIGHT; i++) { // See comment in load() method about WIDTH and HEIGHT being switched
+		for (int j = HEIGHT - 1; j >= 0; j--) { // See comment in load() method about the order of i and j being inverted
 			StringBuilder sb = new StringBuilder();
-			for (int j = 0; j < WIDTH; j++)
-				sb.append(objects[j][i].getType().getDataChar());
+			for (int i = 0; i < WIDTH; i++)
+				sb.append(objects[i][j].getType().getDataChar());
 			pw.println(sb.toString());
 		}
 		pw.close();

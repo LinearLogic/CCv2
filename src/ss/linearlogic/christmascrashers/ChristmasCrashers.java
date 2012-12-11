@@ -12,6 +12,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 import ss.linearlogic.christmascrashers.engine.GLGuru;
+import ss.linearlogic.christmascrashers.engine.RenderMonkey;
 import ss.linearlogic.christmascrashers.state.GameState;
 import ss.linearlogic.christmascrashers.state.IntroState;
 import ss.linearlogic.christmascrashers.state.MainMenuState;
@@ -23,14 +24,14 @@ import ss.linearlogic.christmascrashers.util.TextureMonkey;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.3.1
+ * @version 0.3.2
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.3.1";
+	public static final String VERSION = "0.3.2";
 
 	/**
 	 * Indicates whether the program is running in debug mode
@@ -170,6 +171,7 @@ public class ChristmasCrashers {
 				mainMenuState.draw();
 				break;
 			case GAME:
+				RenderMonkey.renderBackground(0.3, 0.4, 1.0);
 				state = gameState.handleInput();
 				gameState.logic();
 				gameState.draw();

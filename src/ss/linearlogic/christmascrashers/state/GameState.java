@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import ss.linearlogic.christmascrashers.engine.GLGuru;
 import ss.linearlogic.christmascrashers.world.Level;
+import ss.linearlogic.christmascrashers.world.WorldManager;
 
 /**
  * The game state is where most of the user's time is spent, and includes handling of all relevant forms
@@ -19,7 +20,7 @@ public class GameState extends State {
 	/**
 	 * The {@link Level} to move the player around and render
 	 */
-	private Level currentLevel;
+	private static Level currentLevel;
 
 	/**
 	 * Constructor - adds the {@link #importantKeys}
@@ -49,8 +50,8 @@ public class GameState extends State {
 
 	@Override
 	public void draw() {
-//		if (currentLevel != null)
-//			currentLevel.draw();
+		if (currentLevel != null)
+			currentLevel.draw();
 	}
 
 	/**
@@ -61,6 +62,7 @@ public class GameState extends State {
 		GLGuru.setXDisplacement(0);
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
+		currentLevel = WorldManager.getWorld(0).getLevel(0);
 	}
 
 	/**
