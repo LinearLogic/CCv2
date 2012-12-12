@@ -1,6 +1,6 @@
 package ss.linearlogic.christmascrashers.entity;
 
-import org.newdawn.slick.opengl.Texture;
+import ss.linearlogic.christmascrashers.engine.Sprite;
 
 /**
  * {@link Entity} subclass that represents and in-game entity with health that can be damaged and killed. The Player
@@ -24,20 +24,18 @@ public abstract class LivingEntity extends DamagingEntity {
 	private int maxHealth;
 
 	/**
-	 * Constructor - calls the {@link DamagingEntity} superclass {@link DamagingEntity#DamagingEntity(float, float, int, boolean, boolean, boolean, Texture constructor}
+	 * Constructor - calls the {@link DamagingEntity} superclass {@link DamagingEntity#DamagingEntity(Sprite, int, boolean, boolean, boolean) constructor}
 	 * and sets the entity's {@link #health} and {@link #maxHealth} to the provided maxHealth value.
 	 * 
-	 * @param x 
-	 * @param y 
+	 * @param sprite
 	 * @param maxHealth 
 	 * @param damage 
 	 * @param expiresOnCollision 
 	 * @param canPenetrateObjects 
 	 * @param canFly 
-	 * @param tex 
 	 */
-	public LivingEntity(float x, float y, int maxHealth, int damage, boolean expiresOnCollision, boolean canPenetrateObjects, boolean canFly, Texture tex) {
-		super(x, y, damage, expiresOnCollision, canPenetrateObjects, canFly, tex);
+	public LivingEntity(Sprite sprite, int maxHealth, int damage, boolean expiresOnCollision, boolean canPenetrateObjects, boolean canFly) {
+		super(sprite, damage, expiresOnCollision, canPenetrateObjects, canFly);
 		this.health = maxHealth;
 		this.maxHealth = maxHealth;
 	}
@@ -62,6 +60,15 @@ public abstract class LivingEntity extends DamagingEntity {
 	 */
 	public void setHealth(int health) {
 		this.health = health;
+	}
+
+	/**
+	 * Increments the entity's health by the specified amount (can be positive or negative)
+	 * 
+	 * @param amount
+	 */
+	public void incrementHealth(int amount) {
+		health += amount;
 	}
 
 	/**

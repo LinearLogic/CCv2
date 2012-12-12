@@ -1,6 +1,6 @@
 package ss.linearlogic.christmascrashers.entity;
 
-import org.newdawn.slick.opengl.Texture;
+import ss.linearlogic.christmascrashers.engine.Sprite;
 
 /**
  * {@link Entity} subclass that represents and in-game entity capable of dealing damage to other entities.
@@ -22,19 +22,17 @@ public abstract class DamagingEntity extends Entity {
 	private boolean expiresOnCollision;
 
 	/**
-	 * Constructor - calls the {@link Entity} superclass {@link Entity#Entity(float, float, boolean, boolean, Texture) constructor} and sets
+	 * Constructor - calls the {@link Entity} superclass {@link Entity#Entity(Sprite, boolean, boolean) constructor} and sets
 	 * the entity's {@link #damage} and {@link #expiresOnCollision()} attributes to the specified values.
 	 * 
-	 * @param x
-	 * @param y
+	 * @param sprite
 	 * @param damage
 	 * @param expiresOnCollision
 	 * @param canPenetrateObjects
 	 * @param canFly
-	 * @param tex
 	 */
-	public DamagingEntity(float x, float y, int damage, boolean expiresOnCollision, boolean canPenetrateObjects, boolean canFly, Texture tex) {
-		super(x, y, canPenetrateObjects, canFly, tex);
+	public DamagingEntity(Sprite sprite, int damage, boolean expiresOnCollision, boolean canPenetrateObjects, boolean canFly) {
+		super(sprite, canPenetrateObjects, canFly);
 		this.damage = damage;
 		this.expiresOnCollision = expiresOnCollision;
 	}

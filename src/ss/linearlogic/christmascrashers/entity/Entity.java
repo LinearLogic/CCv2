@@ -1,7 +1,8 @@
 package ss.linearlogic.christmascrashers.entity;
 
 import org.lwjgl.util.vector.Vector2f;
-import org.newdawn.slick.opengl.Texture;
+
+import ss.linearlogic.christmascrashers.engine.Sprite;
 
 /**
  * Represents an in-game entity, which can move around and interact with objects and other entities in the level.
@@ -10,16 +11,6 @@ import org.newdawn.slick.opengl.Texture;
  * @since 0.3.3
  */
 public abstract class Entity {
-
-	/**
-	 * The pixel x-coordinate of the bottom left corner of the entity in the level (does not change when the camera shifts)
-	 */
-	private float pixelX;
-
-	/**
-	 * The pixel y-coordinate of the bottom left corner of the entity in the level (does not change when the camera shifts)
-	 */
-	private float pixelY;
 
 	/**
 	 * A 2 dimensional vector representing the entity's current movement speed in the x and y directions
@@ -37,70 +28,69 @@ public abstract class Entity {
 	private boolean canFly;
 
 	/**
-	 * The entity's sprite image
+	 * The entity's {@link Sprite}
 	 */
-	private Texture texture;
+	private Sprite sprite;
 
 	/**
-	 * Constructor - sets the {@link #pixelX} and {@link #pixelY} variables and passthrough flag ({@link #canPenetrateObjects()}),
-	 * sets whether the entity can fly, and initializes the entity's {@link #movementVector} to stationary. Lastly, the constructor sets the
-	 * entity's {@link #texture sprite image} to the provided Texture object.
+	 * Constructor - loads the entity's {@link #sprite} and passthrough flag ({@link #canPenetrateObjects}),
+	 * sets whether the entity {@link #canFly can fly}, and initializes the entity's {@link #movementVector} to stationary.
 	 * 
-	 * @param pixelX
-	 * @param pixelY
+	 * @param sprite
 	 * @param canPenetrateObjects
 	 * @param canFly
-	 * @param tex
 	 */
-	public Entity(float pixelX, float pixelY, boolean canPenetrateObjects, boolean canFly, Texture tex) {
-		this.pixelX = pixelX;
-		this.pixelY = pixelY;
+	public Entity(Sprite sprite, boolean canPenetrateObjects, boolean canFly) {
+		this.sprite = sprite;
 		this.canPenetrateObjects = canPenetrateObjects;
 		this.canFly = canFly;
-		this.texture = tex;
 		this.movementVector = new Vector2f(0, 0);
 	}
 
 	/**
-	 * Adjusts the entity's position based on its {@link #movementVector} and handles collisions
+	 * Adjusts the entity's position based on its {@link #movementVector} and handles collisions. <p>Different subclasses
+	 * will add to this method in various ways - {@link LivingEntity} subclasses, for instance, will handle adjustments
+	 * to health and {@link DamagingEntity} subclasses will handle the expiration of the entity on collision, if applicable.
 	 */
 	public abstract void updatePosition();
 
 	/**
-	 * Renders the entity at its current location
+	 * Renders the entity's {@link #sprite}
 	 */
-	public abstract void draw();
-
-	/**
-	 * @return The {@link #pixelX x-coordinate}, in pixels, of the entity
-	 */
-	public float getPixelX() {
-		return pixelX;
+	public void draw() {
+		sprite.draw();
 	}
 
 	/**
-	 * Sets the {@link #pixelX x-coordinate}, in pixels, of the entity to the provided float value.
+	 * @return the x-coordinate of the entity's {@link #sprite}
+	 */
+	public float getPixelX() {
+		return sprite.getX();
+	}
+
+	/**
+	 * Sets the x-coordinate of the entity's {@link #sprite} to the supplied integer value
 	 * 
 	 * @param x
 	 */
 	public void setPixelX(int x) {
-		this.pixelX = x;
+		sprite.setX(x);
 	}
 
 	/**
-	 * @return The {@link #pixelY y-coordinate}, in pixels, of the entity
+	 * @return the y-coordinate of the entity's {@link #sprite}
 	 */
 	public float getPixelY() {
-		return pixelY;
+		return sprite.getY();
 	}
 
 	/**
-	 * Sets the {@link #pixelY y-coordinate}, in pixels, of the entity to the provided float value.
+	 * Sets the y-coordinate of the entity's {@link #sprite} to the supplied integer value
 	 * 
 	 * @param y
 	 */
 	public void setPixelY(int y) {
-		this.pixelY = y;
+		sprite.setY(y);
 	}
 
 	/**
@@ -115,22 +105,6 @@ public abstract class Entity {
 	 */
 	public boolean canPenetrateObjects() {
 		return canPenetrateObjects;
-	}
-
-	/**
-	 * @return The entity's {@link #texture}
-	 */
-	public Texture getTexture() {
-		return texture;
-	}
-
-	/**
-	 * Sets the entity's {@link #texture} to the provided Texture object
-	 * 
-	 * @param tex
-	 */
-	public void setTexture(Texture tex) {
-		texture = tex;
 	}
 
 	/**
