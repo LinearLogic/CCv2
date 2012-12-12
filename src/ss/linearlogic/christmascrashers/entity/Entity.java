@@ -15,22 +15,22 @@ public abstract class Entity {
 	/**
 	 * A 2 dimensional vector representing the entity's current movement speed in the x and y directions
 	 */
-	private Vector2f movementVector;
+	protected Vector2f movementVector;
 
 	/**
 	 * Whether this entity can pass through through objects, regardless of their penatrability
 	 */
-	private boolean canPenetrateObjects;
+	protected boolean canPenetrateObjects;
 
 	/**
 	 * Whether or not this entity's movement is effected by gravity
 	 */
-	private boolean canFly;
+	protected boolean canFly;
 
 	/**
 	 * The entity's {@link Sprite}
 	 */
-	private Sprite sprite;
+	protected Sprite sprite;
 
 	/**
 	 * Constructor - loads the entity's {@link #sprite} and passthrough flag ({@link #canPenetrateObjects}),
@@ -59,6 +59,13 @@ public abstract class Entity {
 	 */
 	public void draw() {
 		sprite.draw();
+	}
+
+	/**
+	 * @return The entity's {@link #sprite}
+	 */
+	public Sprite getSprite() {
+		return sprite;
 	}
 
 	/**

@@ -81,6 +81,15 @@ public class Sprite {
 	}
 
 	/**
+	 * Adjusts the sprite's {@link #x x-coordinate} by the specified amount (can be positive or negative)
+	 * 
+	 * @param amount
+	 */
+	public void incrementX(int amount) {
+		x += amount;
+	}
+
+	/**
 	 * @return The {@link #y y-coordinate} of the sprite
 	 */
 	public int getY() {
@@ -93,6 +102,15 @@ public class Sprite {
 	 */
 	public void setY(int y) {
 		this.y = y;
+	}
+
+	/**
+	 * Adjusts the sprite's {@link #y y-coordinate} by the specified amount (can be positive or negative)
+	 * 
+	 * @param amount
+	 */
+	public void incrementY(int amount) {
+		y += amount;
 	}
 
 	/**

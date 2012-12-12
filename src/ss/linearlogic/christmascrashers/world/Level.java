@@ -136,12 +136,6 @@ public class Level {
 				objects[i][j] = new Object(this, i, j, type);
 			}
 		}
-		for (int i = 0; i < WIDTH; i++) {
-			for (int j = 0; j < HEIGHT; j++) {
-				if (objects[i][j].getType() != ObjectType.AIR)
-					System.out.println(objects[i][j].getType().toString());
-			}
-		}
 	}
 
 	/**

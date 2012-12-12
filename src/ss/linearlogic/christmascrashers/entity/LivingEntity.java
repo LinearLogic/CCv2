@@ -16,12 +16,12 @@ public abstract class LivingEntity extends DamagingEntity {
 	 * The entity's current health, which is less than or equal to its {@link #maxHealth}. If the entity's health
 	 * reaches zero, then the {@link #handleDeath()} method is called.
 	 */
-	private int health;
+	protected int health;
 
 	/**
 	 * The entity's health capacity
 	 */
-	private int maxHealth;
+	protected int maxHealth;
 
 	/**
 	 * Constructor - calls the {@link DamagingEntity} superclass {@link DamagingEntity#DamagingEntity(Sprite, int, boolean, boolean, boolean) constructor}

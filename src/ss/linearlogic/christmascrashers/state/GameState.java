@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.engine.GLGuru;
+import ss.linearlogic.christmascrashers.entity.Player;
 import ss.linearlogic.christmascrashers.world.Level;
 import ss.linearlogic.christmascrashers.world.WorldManager;
 
@@ -22,6 +23,11 @@ public class GameState extends State {
 	 * The {@link Level} to move the player around and render
 	 */
 	private static Level currentLevel;
+
+	/**
+	 * The {@link Player} object controlled by input from this client
+	 */
+	private static Player mainPlayer;
 
 	/**
 	 * Constructor - adds the {@link #importantKeys}
@@ -47,25 +53,26 @@ public class GameState extends State {
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
 			keyDown = true;
-			glTranslated(-5, 0, 0);
-			GLGuru.setXDisplacement(GLGuru.getXDisplacement() + 5);
+			mainPlayer.getMovementVector().setX(mainPlayer.getMovementVector().getX() + 5);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
 			keyDown = true;
-			glTranslated(5, 0, 0);
-			GLGuru.setXDisplacement(GLGuru.getXDisplacement() - 5);
+			mainPlayer.getMovementVector().setX(mainPlayer.getMovementVector().getX() - 5);
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
 			keyDown = true;
-			glTranslated(0, -5, 0);
-			GLGuru.setYDisplacement(GLGuru.getYDisplacement() + 5);
+			mainPlayer.getMovementVector().setY(mainPlayer.getMovementVector().getY() + 5);
 
 		}
 		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
 			keyDown = true;
-			glTranslated(0, 5, 0);
-			GLGuru.setYDisplacement(GLGuru.getYDisplacement() - 5);
+			mainPlayer.getMovementVector().setY(mainPlayer.getMovementVector().getY() - 5);
 		}
+		glTranslated(-mainPlayer.getMovementVector().getX(), -mainPlayer.getMovementVector().getY(), 0);
+
+		mainPlayer.updatePosition();
+		GLGuru.setXDisplacement(mainPlayer.getPixelX() + (mainPlayer.getSprite().getWidth() - ChristmasCrashers.getWindowWidth()) / 2);
+		GLGuru.setYDisplacement(mainPlayer.getPixelY() + (mainPlayer.getSprite().getHeight() - ChristmasCrashers.getWindowHeight()) / 2);
 		return StateType.GAME;
 	}
 
@@ -78,6 +85,7 @@ public class GameState extends State {
 	public void draw() {
 		if (currentLevel != null)
 			currentLevel.draw();
+		mainPlayer.draw();
 	}
 
 	/**
@@ -86,11 +94,16 @@ public class GameState extends State {
 	public static void initialize() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing Game state");
-		glTranslated(GLGuru.getXDisplacement(), GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
+		currentLevel = WorldManager.getWorld(0).getLevel(0);
+		mainPlayer = new Player(5, 1); // Initialize the user's player
+		int xOffset = (int) (mainPlayer.getPixelX() + (mainPlayer.getSprite().getWidth() - ChristmasCrashers.getWindowWidth()) / 2);
+		int yOffset = (int) (mainPlayer.getPixelY() + (mainPlayer.getSprite().getHeight() - ChristmasCrashers.getWindowHeight()) / 2);
+		System.out.println(GLGuru.getXDisplacement());
+		glTranslated(GLGuru.getXDisplacement() - xOffset, GLGuru.getYDisplacement() - yOffset, -GLGuru.getZDisplacement()); // Reset the camera displacement
+
 		GLGuru.setXDisplacement(0);
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
-		currentLevel = WorldManager.getWorld(0).getLevel(0);
 	}
 
 	/**

@@ -13,13 +13,13 @@ public abstract class DamagingEntity extends Entity {
 	/**
 	 * The amount of damage this entity deals to other entities
 	 */
-	private int damage;
+	protected int damage;
 
 	/**
 	 * True if the entity is destroyed after dealing damage to an entity or colliding with an object, false if the
 	 * entity can repeatedly deal damage. Projectiles expire on collision while most living entities do not.
 	 */
-	private boolean expiresOnCollision;
+	protected boolean expiresOnCollision;
 
 	/**
 	 * Constructor - calls the {@link Entity} superclass {@link Entity#Entity(Sprite, boolean, boolean) constructor} and sets
