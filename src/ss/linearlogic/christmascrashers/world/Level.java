@@ -75,6 +75,16 @@ public class Level {
 		int rightBound = (int) Math.ceil((GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth()) / Object.TILE_SIZE);
 		int bottomBound = (int) Math.floor(GLGuru.getYDisplacement() / Object.TILE_SIZE);
 		int topBound = (int) Math.ceil((GLGuru.getYDisplacement() + ChristmasCrashers.getWindowHeight()) / Object.TILE_SIZE);
+		
+		// ArrayIndexOutOfBoundsException prevention
+		if (leftBound < 0)
+			leftBound = 0;
+		if (rightBound >= WIDTH)
+			rightBound = WIDTH;
+		if (bottomBound < 0)
+			bottomBound = 0;
+		if (topBound >= HEIGHT)
+			topBound = HEIGHT;
 		for (int i = leftBound; i < rightBound; i++)
 			for (int j = bottomBound; j < topBound; j++)
 				if(objects[i][j].getType().getTexture() != null)

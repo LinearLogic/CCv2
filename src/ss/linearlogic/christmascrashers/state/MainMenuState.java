@@ -112,6 +112,9 @@ public class MainMenuState extends State {
 			keyDown = true;
 			switch(selectedButton) {
 				case START_GAME:
+					if (ChristmasCrashers.isDebugModeEnabled())
+						System.out.println("Switching to Game state.");
+					GameState.setKeyDown(true);
 					GameState.initialize();
 					return StateType.GAME;
 				case LEVEL_EDITOR:
@@ -228,7 +231,7 @@ public class MainMenuState extends State {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing MainMenu state.");
 		selectedButton = NavigationButton.NONE;
-		glTranslated(-GLGuru.getXDisplacement(), -GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
+		glTranslated(GLGuru.getXDisplacement(), GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
 		GLGuru.setXDisplacement(0);
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);

@@ -58,7 +58,7 @@ public class RenderMonkey {
 	 * @param transparency The transparency factor of the rectangle (0 = entirely transparent, 1 = entirely opaque)
 	 */
 	public static void renderTransparentBackground(double r, double g, double b, double transparency) {
-		renderTransparentColoredRectangle(0, 0, ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight(), r, g, b, transparency);
+		renderTransparentColoredRectangle(GLGuru.getXDisplacement(), GLGuru.getYDisplacement(), ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight(), r, g, b, transparency);
 	}
 
 	/**

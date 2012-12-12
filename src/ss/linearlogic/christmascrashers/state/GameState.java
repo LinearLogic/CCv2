@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.glTranslated;
 
 import org.lwjgl.input.Keyboard;
 
+import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.engine.GLGuru;
 import ss.linearlogic.christmascrashers.world.Level;
 import ss.linearlogic.christmascrashers.world.WorldManager;
@@ -26,9 +27,10 @@ public class GameState extends State {
 	 * Constructor - adds the {@link #importantKeys}
 	 */
 	public GameState() {
-		importantKeys.add(Keyboard.KEY_UP);
 		importantKeys.add(Keyboard.KEY_RIGHT);
 		importantKeys.add(Keyboard.KEY_LEFT);
+		importantKeys.add(Keyboard.KEY_UP);
+		importantKeys.add(Keyboard.KEY_DOWN);
 		importantKeys.add(Keyboard.KEY_ESCAPE);
 	}
 
@@ -37,8 +39,32 @@ public class GameState extends State {
 		// Adjust player's speed accordingly
 		checkKeyStates();
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !keyDown) {
+			if (ChristmasCrashers.isDebugModeEnabled())
+				System.out.println("Switching to MainMenu state.");
+			MainMenuState.setKeyDown(true);
 			MainMenuState.initialize(false); // Skip the fade-in animation
 			return StateType.MAIN_MENU;
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+			keyDown = true;
+			glTranslated(-5, 0, 0);
+			GLGuru.setXDisplacement(GLGuru.getXDisplacement() + 5);
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+			keyDown = true;
+			glTranslated(5, 0, 0);
+			GLGuru.setXDisplacement(GLGuru.getXDisplacement() - 5);
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+			keyDown = true;
+			glTranslated(0, -5, 0);
+			GLGuru.setYDisplacement(GLGuru.getYDisplacement() + 5);
+
+		}
+		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+			keyDown = true;
+			glTranslated(0, 5, 0);
+			GLGuru.setYDisplacement(GLGuru.getYDisplacement() - 5);
 		}
 		return StateType.GAME;
 	}
@@ -58,7 +84,9 @@ public class GameState extends State {
 	 * Sets the gamestate to active
 	 */
 	public static void initialize() {
-		glTranslated(-GLGuru.getXDisplacement(), -GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
+		if (ChristmasCrashers.isDebugModeEnabled())
+			System.out.println("Initializing Game state");
+		glTranslated(GLGuru.getXDisplacement(), GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
 		GLGuru.setXDisplacement(0);
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
