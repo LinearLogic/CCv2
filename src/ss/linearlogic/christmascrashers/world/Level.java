@@ -210,7 +210,7 @@ public class Level {
 	/**
 	 * @param x
 	 * @param y
-	 * @return The object at the specified
+	 * @return The object at the specified location within the level
 	 */
 	public Object getObject(int x, int y) {
 		if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {

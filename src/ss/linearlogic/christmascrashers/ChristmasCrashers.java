@@ -8,6 +8,7 @@ import java.util.Scanner;
 
 import org.lwjgl.LWJGLException;
 import org.lwjgl.Sys;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
@@ -24,14 +25,14 @@ import ss.linearlogic.christmascrashers.util.TextureMonkey;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.3.6
+ * @version 0.3.7
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.3.6";
+	public static final String VERSION = "0.3.7";
 
 	/**
 	 * Indicates whether the program is running in debug mode
@@ -76,6 +77,11 @@ public class ChristmasCrashers {
 	private static boolean running = false;
 
 	/**
+	 * Whether to load a new game instance after destroying the current one
+	 */
+	private static boolean reload;
+
+	/**
 	 * The system time (retrieved using {@link #getTime()}) at which the most recent frame was rendered.
 	 */
 	private static long lastFrame;
@@ -100,6 +106,7 @@ public class ChristmasCrashers {
 		loadStates();
 		initTimer();
 		running = true;
+		reload = false;
 		IntroState.initialize();
 		TextureMonkey.init();
 
@@ -111,13 +118,22 @@ public class ChristmasCrashers {
 
 			Display.update();
 			Display.sync(60); // Framerate = 60 fps
-			if (Display.isCloseRequested())
+			if (Display.isCloseRequested()) {
 				running = false;
+				reload = false;
+			}
+			if (Keyboard.isKeyDown(Keyboard.KEY_F5)) {
+				running = false;
+				reload = true;
+			}
 		}
 		if (debugModeEnabled)
 			System.out.println("Destroying the openGL context and closing the game window.");
 		Display.destroy();
-		System.exit(0);
+		if (reload)
+			new ChristmasCrashers(windowWidth, windowHeight);
+		else
+			System.exit(0);
 	}
 
 	/**

@@ -36,7 +36,6 @@ public class GameState extends State {
 		importantKeys.add(Keyboard.KEY_RIGHT);
 		importantKeys.add(Keyboard.KEY_LEFT);
 		importantKeys.add(Keyboard.KEY_UP);
-		importantKeys.add(Keyboard.KEY_DOWN);
 		importantKeys.add(Keyboard.KEY_ESCAPE);
 	}
 
@@ -51,6 +50,7 @@ public class GameState extends State {
 			MainMenuState.initialize(false); // Skip the fade-in animation
 			return StateType.MAIN_MENU;
 		}
+
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
 			keyDown = true;
 			mainPlayer.getMovementVector().setX(mainPlayer.getMovementVector().getX() + 5);
@@ -59,18 +59,16 @@ public class GameState extends State {
 			keyDown = true;
 			mainPlayer.getMovementVector().setX(mainPlayer.getMovementVector().getX() - 5);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_UP) && !mainPlayer.canFly() && !mainPlayer.isAirborne()) {
 			keyDown = true;
-			mainPlayer.getMovementVector().setY(mainPlayer.getMovementVector().getY() + 5);
-
+			mainPlayer.setAirborne(true);
+			mainPlayer.getMovementVector().setY(mainPlayer.getMovementVector().getY() + 12.5f);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
-			keyDown = true;
-			mainPlayer.getMovementVector().setY(mainPlayer.getMovementVector().getY() - 5);
-		}
+		int posX = mainPlayer.getSprite().getX();
+		int posY = mainPlayer.getSprite().getY();
 		mainPlayer.updatePosition();
-		glTranslated(-mainPlayer.getMovementVector().getX(), -mainPlayer.getMovementVector().getY(), 0);
-		mainPlayer.clearMovementVector();
+		glTranslated(-(mainPlayer.getSprite().getX() - posX), -(mainPlayer.getSprite().getY() - posY), 0);
+		mainPlayer.getMovementVector().setX(0);
 		
 		GLGuru.setXDisplacement(mainPlayer.getPixelX() + (mainPlayer.getSprite().getWidth() - ChristmasCrashers.getWindowWidth()) / 2);
 		GLGuru.setYDisplacement(mainPlayer.getPixelY() + (mainPlayer.getSprite().getHeight() - ChristmasCrashers.getWindowHeight()) / 2);

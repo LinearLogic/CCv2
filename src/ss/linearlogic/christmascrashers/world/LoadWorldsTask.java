@@ -20,18 +20,13 @@ public class LoadWorldsTask implements Runnable {
 	 * Runs the thread that loads the {@link #worldsToLoad}
 	 */
 	public void run() {
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
 		if (ChristmasCrashers.isDebugModeEnabled())	
 			System.out.println("Starting a new LoadWorldsTask...");
 		for (World w : this.worldsToLoad) { // Load the detected worlds
 			w.load();
 		}
 		try {
-			Thread.sleep(2000); // Just to make things look realistic ;-)
+			Thread.sleep(4000); // Just to make things look realistic ;-)
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

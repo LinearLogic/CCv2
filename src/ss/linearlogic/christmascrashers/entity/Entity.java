@@ -2,6 +2,7 @@ package ss.linearlogic.christmascrashers.entity;
 
 import org.lwjgl.util.vector.Vector2f;
 
+import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.engine.Sprite;
 import ss.linearlogic.christmascrashers.object.Object;
 import ss.linearlogic.christmascrashers.state.GameState;
@@ -30,6 +31,8 @@ public abstract class Entity {
 	 */
 	protected boolean canFly;
 
+	protected boolean airborne;
+
 	/**
 	 * The entity's {@link Sprite}
 	 */
@@ -50,12 +53,30 @@ public abstract class Entity {
 		this.movementVector = new Vector2f(0, 0);
 	}
 
+	// TODO: add abstract update() method, which can call updatePosition()
+
 	/**
-	 * Adjusts the entity's position based on its {@link #movementVector} and handles collisions. <p>Different subclasses
-	 * will add to this method in various ways - {@link LivingEntity} subclasses, for instance, will handle adjustments
-	 * to health and {@link DamagingEntity} subclasses will handle the expiration of the entity on collision, if applicable.
+	 * Adjusts the entity's position based on its {@link #movementVector} and handles collisions.
 	 */
-	public abstract void updatePosition();
+	public void updatePosition() {
+		applyGravity();
+		handleCollisionWithObject();
+		sprite.incrementX((int) movementVector.getX());
+		sprite.incrementY((int) movementVector.getY());
+	}
+
+	/**
+	 * Applies the force of gravity to the entity's motion, if applicable.
+	 */
+	public void applyGravity() {
+		if (canFly)
+			return;
+		if (movementVector.getY() > 0) {// Entity is travelling upwards - apply more gravity
+			movementVector.setY((float) (movementVector.getY() - ((double) 5 * ChristmasCrashers.getDelta() / 170)));
+		}
+		else
+			movementVector.setY((float) (movementVector.getY() - ((double) 3 * ChristmasCrashers.getDelta() / 100)));
+	}
 
 	/**
 	 * Checks for a collision with an in-game object and if detected adjusts the entity's location accordingly. If
@@ -75,7 +96,6 @@ public abstract class Entity {
 				movingLeft = false;
 				i = (int) Math.floor((sprite.getX() + sprite.getWidth() + movementVector.getX()) / Object.TILE_SIZE);
 			}
-			System.out.println(i);
 			for (int j = (int) Math.floor(sprite.getY() / Object.TILE_SIZE); j <= (int) Math.floor((sprite.getY() + sprite.getHeight()) / Object.TILE_SIZE); j++) {
 				Object o = GameState.getCurrentLevel().getObject(i, j);
 				if (o == null)
@@ -84,7 +104,7 @@ public abstract class Entity {
 					if (movingLeft)
 						sprite.setX((i + 1) * Object.TILE_SIZE);
 					else
-						sprite.setX((int) (Object.TILE_SIZE * Math.floor((sprite.getX() + movementVector.getX()) / Object.TILE_SIZE)));
+						sprite.setX((int) (Object.TILE_SIZE * Math.floor((sprite.getX() + movementVector.getX()) / Object.TILE_SIZE)) + (Object.TILE_SIZE - sprite.getWidth() - 1 /* Prevents a window offset glitch*/));
 					movementVector.setX(0);
 					break; // Prevent overcorrection if the entity is touching more than one non-penatrable object
 				}
@@ -98,16 +118,28 @@ public abstract class Entity {
 				j = (int) Math.floor((sprite.getY() + sprite.getHeight() + movementVector.getY()) / Object.TILE_SIZE);
 			}
 			for (int i = (int) Math.floor(sprite.getX() / Object.TILE_SIZE); i <= (int) Math.floor((sprite.getX() + sprite.getWidth()) / Object.TILE_SIZE); i++) {
+				if (j < 0 || j > 63) { // Location is out of range
+					if (movingDownward) {
+						sprite.setY(Object.TILE_SIZE); // Floor
+						airborne = false;
+					}
+					else
+						sprite.setY((int) (Object.TILE_SIZE * 63) + (Object.TILE_SIZE - sprite.getHeight() - 1 /* Prevents a window offset glitch*/));
+					movementVector.setY(0);
+					return;
+				}
 				Object o = GameState.getCurrentLevel().getObject(i, j);
 				if (o == null)
 					continue;
 				if (!o.getType().isPenetrable()) {
-					if (movingDownward)
+					if (movingDownward) {
 						sprite.setY((j + 1) * Object.TILE_SIZE);
+						airborne = false;
+					}
 					else
-						sprite.setY((int) (Object.TILE_SIZE * Math.floor((sprite.getY() + movementVector.getY()) / (double) Object.TILE_SIZE)));
+						sprite.setY((int) (Object.TILE_SIZE * Math.floor((sprite.getY() + movementVector.getY()) / Object.TILE_SIZE)) + (Object.TILE_SIZE - sprite.getHeight() - 1 /* Prevents a window offset glitch*/));
 					movementVector.setY(0);
-					break; // Prevent overcorrection if the entity is touching more than one non-penatrable object
+					return; // Prevent overcorrection if the entity is touching more than one non-penatrable object
 				}
 			}
 		}
@@ -187,5 +219,21 @@ public abstract class Entity {
 	 */
 	public void setFlyMode(boolean canFly) {
 		this.canFly = canFly;
+	}
+
+	/**
+	 * @return Whether the entity is currently airborne
+	 */
+	public boolean isAirborne() {
+		return airborne;
+	}
+
+	/**
+	 * Sets whether the entity is airborne
+	 * 
+	 * @param airborne
+	 */
+	public void setAirborne(boolean airborne) {
+		this.airborne = airborne;
 	}
 }
