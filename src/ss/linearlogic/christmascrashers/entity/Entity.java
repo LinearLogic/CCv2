@@ -3,6 +3,8 @@ package ss.linearlogic.christmascrashers.entity;
 import org.lwjgl.util.vector.Vector2f;
 
 import ss.linearlogic.christmascrashers.engine.Sprite;
+import ss.linearlogic.christmascrashers.object.Object;
+import ss.linearlogic.christmascrashers.state.GameState;
 
 /**
  * Represents an in-game entity, which can move around and interact with objects and other entities in the level.
@@ -18,7 +20,8 @@ public abstract class Entity {
 	protected Vector2f movementVector;
 
 	/**
-	 * Whether this entity can pass through through objects, regardless of their penatrability
+	 * Whether this entity can pass through through objects, regardless of their penatrability (an entity that
+	 * cannot pass through any object will still pass through objects that are flagged as penetrable)
 	 */
 	protected boolean canPenetrateObjects;
 
@@ -53,6 +56,62 @@ public abstract class Entity {
 	 * to health and {@link DamagingEntity} subclasses will handle the expiration of the entity on collision, if applicable.
 	 */
 	public abstract void updatePosition();
+
+	/**
+	 * Checks for a collision with an in-game object and if detected adjusts the entity's location accordingly. If
+	 * the entity is able to {@link #canPenetrateObjects pass through objects}, this method returns immediately
+	 * and does not adjust the entity's location.
+	 * <p>To maximize efficiency, this method only checks the objects
+	 * in contact with the sides of the entity in which the entity is moving. For instance, if the entity is moving
+	 * to the right and down, only its its right and bottom faces will be checked for a collision with an object.
+	 */
+	protected void handleCollisionWithObject() {
+		if (canPenetrateObjects)
+			return;
+		if (movementVector.getX() != 0) { // Entity is moving horizontally
+			boolean movingLeft = true;
+			int i = (int) Math.floor((sprite.getX() + movementVector.getX()) / Object.TILE_SIZE); // Default to the left face
+			if (movementVector.getX() > 0) { // Object is moving to the right - switch to the right face
+				movingLeft = false;
+				i = (int) Math.floor((sprite.getX() + sprite.getWidth() + movementVector.getX()) / Object.TILE_SIZE);
+			}
+			System.out.println(i);
+			for (int j = (int) Math.floor(sprite.getY() / Object.TILE_SIZE); j <= (int) Math.floor((sprite.getY() + sprite.getHeight()) / Object.TILE_SIZE); j++) {
+				Object o = GameState.getCurrentLevel().getObject(i, j);
+				if (o == null)
+					continue;
+				if (!o.getType().isPenetrable()) {
+					if (movingLeft)
+						sprite.setX((i + 1) * Object.TILE_SIZE);
+					else
+						sprite.setX((int) (Object.TILE_SIZE * Math.floor((sprite.getX() + movementVector.getX()) / Object.TILE_SIZE)));
+					movementVector.setX(0);
+					break; // Prevent overcorrection if the entity is touching more than one non-penatrable object
+				}
+			}
+		}
+		if (movementVector.getY() != 0) { // Entity is moving vertically
+			boolean movingDownward = true;
+			int j = (int) Math.floor((sprite.getY() + movementVector.getY()) / Object.TILE_SIZE); // Default to the bottom face
+			if (movementVector.getY() > 0) { // Object is moving upward - switch to the top face
+				movingDownward = false;
+				j = (int) Math.floor((sprite.getY() + sprite.getHeight() + movementVector.getY()) / Object.TILE_SIZE);
+			}
+			for (int i = (int) Math.floor(sprite.getX() / Object.TILE_SIZE); i <= (int) Math.floor((sprite.getX() + sprite.getWidth()) / Object.TILE_SIZE); i++) {
+				Object o = GameState.getCurrentLevel().getObject(i, j);
+				if (o == null)
+					continue;
+				if (!o.getType().isPenetrable()) {
+					if (movingDownward)
+						sprite.setY((j + 1) * Object.TILE_SIZE);
+					else
+						sprite.setY((int) (Object.TILE_SIZE * Math.floor((sprite.getY() + movementVector.getY()) / (double) Object.TILE_SIZE)));
+					movementVector.setY(0);
+					break; // Prevent overcorrection if the entity is touching more than one non-penatrable object
+				}
+			}
+		}
+	}
 
 	/**
 	 * Renders the entity's {@link #sprite}

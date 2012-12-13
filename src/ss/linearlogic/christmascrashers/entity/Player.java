@@ -34,7 +34,7 @@ public class Player extends LivingEntity {
 	 * @param y The tile y-coordinate of the Player within the current level
 	 */
 	public Player(int x, int y) {
-		super(new Sprite(x * Object.TILE_SIZE, y * Object.TILE_SIZE, 28, 28, TextureMonkey.loadTexture("PNG", "files" + File.separator + "player.png")), 100, 0, false, false, false);
+		super(new Sprite(x * Object.TILE_SIZE, y * Object.TILE_SIZE, 35, 35, TextureMonkey.loadTexture("PNG", "files" + File.separator + "player.png")), 100, 0, false, false, false);
 	}
 
 	@Override
@@ -44,8 +44,15 @@ public class Player extends LivingEntity {
 
 	@Override
 	public void updatePosition() {
+		handleCollisionWithObject();
 		sprite.incrementX((int) movementVector.getX());
 		sprite.incrementY((int) movementVector.getY());
+	}
+
+	/**
+	 * Resets the player's {@link Entity#movementVector}
+	 */
+	public void clearMovementVector() {
 		movementVector.setX(0);
 		movementVector.setY(0);
 	}

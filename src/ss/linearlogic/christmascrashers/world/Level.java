@@ -206,4 +206,17 @@ public class Level {
 	public String getDiskLocation() {
 		return "files" + File.separator + "worlds" + File.separator + "world" + worldID + File.separator + "level" + ID + ".ll";
 	}
+
+	/**
+	 * @param x
+	 * @param y
+	 * @return The object at the specified
+	 */
+	public Object getObject(int x, int y) {
+		if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
+			if (ChristmasCrashers.isDebugModeEnabled())
+				System.err.println("Failed to retrieve the object at the tile location (" + x + ", " + y + ") - index out of bounds.\nThe x value must be between 0 and " + (WIDTH - 1) + ", and the height value must be between 0 and " + (HEIGHT - 1) + ", inclusive.");
+		}
+		return objects[x][y];
+	}
 }

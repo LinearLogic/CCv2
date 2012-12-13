@@ -13,7 +13,7 @@ public interface IObject {
 	/**
 	 * The uniform length and width, in pixels, of each object's texture tile.
 	 */
-	public static final int TILE_SIZE = 32;
+	public static final int TILE_SIZE = 40;
 
 	/**
 	 * @return The {@link Level} that contains the object

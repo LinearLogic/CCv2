@@ -68,9 +68,10 @@ public class GameState extends State {
 			keyDown = true;
 			mainPlayer.getMovementVector().setY(mainPlayer.getMovementVector().getY() - 5);
 		}
-		glTranslated(-mainPlayer.getMovementVector().getX(), -mainPlayer.getMovementVector().getY(), 0);
-
 		mainPlayer.updatePosition();
+		glTranslated(-mainPlayer.getMovementVector().getX(), -mainPlayer.getMovementVector().getY(), 0);
+		mainPlayer.clearMovementVector();
+		
 		GLGuru.setXDisplacement(mainPlayer.getPixelX() + (mainPlayer.getSprite().getWidth() - ChristmasCrashers.getWindowWidth()) / 2);
 		GLGuru.setYDisplacement(mainPlayer.getPixelY() + (mainPlayer.getSprite().getHeight() - ChristmasCrashers.getWindowHeight()) / 2);
 		return StateType.GAME;
@@ -109,7 +110,7 @@ public class GameState extends State {
 	/**
 	 * @return The {@link #currentLevel}
 	 */
-	public Level getCurrentLevel() {
+	public static Level getCurrentLevel() {
 		return currentLevel;
 	}
 }

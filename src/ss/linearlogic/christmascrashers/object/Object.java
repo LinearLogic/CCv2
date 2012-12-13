@@ -14,7 +14,7 @@ public class Object implements IObject {
 	/**
 	 * The {@link Level} that contains the object
 	 */
-	private Level level;
+	private Level level; // TODO: determine if this is really necessary
 
 	/**
 	 * The tile x-coordinate of the object within the level
