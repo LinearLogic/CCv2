@@ -25,6 +25,11 @@ public enum StateType {
 	GAME,
 
 	/**
+	 * The flag for the {@link LevelEditorState}
+	 */
+	LEVEL_EDITOR,
+
+	/**
 	 * The flag for the {@link WindowState}
 	 */
 	WINDOW;
