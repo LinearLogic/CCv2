@@ -15,7 +15,7 @@ public interface StateInterface {
 	 * 
 	 * @return The new state that will be switched on in the next iteration of the main loop.
 	 */
-	StateType handleInput();
+	void handleInput();
 
 	/**
 	 * Executes the logic for each graphical and non-graphical object.
@@ -26,6 +26,12 @@ public interface StateInterface {
 	 * Renders the frame (and all graphical objects in it) for the game state.
 	 */
 	void draw();
+
+	/**
+	 * Sets the {@link ChristmasCrashers#currentState} to this state and runs the specific initialization code (such
+	 * as starting an animation or loading a world) for this state.
+	 */
+	void initialize();
 
 	/**
 	 * Adds the specified keyID to the {@link State#importantKeys} list.

@@ -32,7 +32,7 @@ public class LevelEditorState extends State {
 	/**
 	 * The {@link World} object currently being edited
 	 */
-	private static World currentWorld;
+	private World currentWorld;
 
 	/**
 	 * The {@link Level} object currently being edited
@@ -44,12 +44,11 @@ public class LevelEditorState extends State {
 	 */
 	public LevelEditorState() {
 		font = RenderMonkey.loadFont("files" + File.separator + "FIXEDSYS500C.TTF", 30);
-		
 	}
 
 	@Override
-	public StateType handleInput() {
-		return null;
+	public void handleInput() {
+		
 	}
 
 	@Override
@@ -63,16 +62,35 @@ public class LevelEditorState extends State {
 	}
 
 	/**
-	 * Prepares the LevelEditor state to be loaded and set active, setting the {@link #currentWorld} to the
-	 * specified {@link World} object.
-	 * 
-	 * @param worldToEdit
+	 * Prepares the LevelEditor state to be set active. The {@link #currentWorld} is provided using the 
 	 */
-	public static void initialize(World worldToEdit) {
-		currentWorld = worldToEdit;
+	public void initialize() {
 		glTranslated(GLGuru.getXDisplacement(), GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
 		GLGuru.setXDisplacement(0);
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
+	}
+
+	/**
+	 * @return The {@link World} object currently being edited
+	 */
+	public World getCurrentWorld() {
+		return currentWorld;
+	}
+
+	/**
+	 * Sets the {@link #currentWorld} to the specified world object
+	 * 
+	 * @param worldToEdit The world to be modified in the editor
+	 */
+	public void setCurrentWorld(World worldToEdit) {
+		currentWorld = worldToEdit;
+	}
+
+	/**
+	 * @return The {@link Level} object currently being edited
+	 */
+	public Level getCurrentLevel() {
+		return currentLevel;
 	}
 }

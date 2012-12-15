@@ -6,7 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 /**
  * The State superclass, which implements the {@link StateInterface} and defines methods for handling of
- * {@link #importantKeys}. The methods declared in the {@link StateInterface are implemented in full in
+ * {@link #importantKeys}. The methods declared in the {@link StateInterface} are implemented in full in
  * the subclasses of this class.
  * 
  * @author LinearLogic
@@ -25,7 +25,7 @@ public abstract class State implements StateInterface {
 	 * keyboard input be handled. In the case of the {@link MainMenuState}, the left mouse button also
 	 * affects the status of the keyDown flag.
 	 */
-	protected static boolean keyDown;
+	protected boolean keyDown;
 
 	/**
 	 * Iterates through the keyIDs in {@link #importantKeys}, checking the state of each key. If one of
@@ -43,14 +43,14 @@ public abstract class State implements StateInterface {
 	/**
 	 * @return The value of the {@link #keyDown} variable
 	 */
-	public static boolean getKeyDown() {
+	public boolean getKeyDown() {
 		return keyDown;
 	}
 	/**
 	 * Sets the value of {@link #keyDown} to the supplied boolean
 	 * @param value The new key state (true if down, false if up)
 	 */
-	public static void setKeyDown(boolean value) {
+	public void setKeyDown(boolean value) {
 		keyDown = value;
 	}
 

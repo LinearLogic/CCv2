@@ -6,6 +6,7 @@ import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.engine.Sprite;
 import ss.linearlogic.christmascrashers.object.Object;
 import ss.linearlogic.christmascrashers.state.GameState;
+import ss.linearlogic.christmascrashers.state.StateType;
 
 /**
  * Represents an in-game entity, which can move around and interact with objects and other entities in the level.
@@ -97,7 +98,7 @@ public abstract class Entity {
 				i = (int) Math.floor((sprite.getX() + sprite.getWidth() + movementVector.getX()) / Object.TILE_SIZE);
 			}
 			for (int j = (int) Math.floor(sprite.getY() / Object.TILE_SIZE); j <= (int) Math.floor((sprite.getY() + sprite.getHeight()) / Object.TILE_SIZE); j++) {
-				Object o = GameState.getCurrentLevel().getObject(i, j);
+				Object o = ((GameState) ChristmasCrashers.getState(StateType.GAME)).getCurrentLevel().getObject(i, j);
 				if (o == null)
 					continue;
 				if (!o.getType().isPenetrable()) {
@@ -128,7 +129,7 @@ public abstract class Entity {
 					movementVector.setY(0);
 					return;
 				}
-				Object o = GameState.getCurrentLevel().getObject(i, j);
+				Object o = ((GameState) ChristmasCrashers.getState(StateType.GAME)).getCurrentLevel().getObject(i, j);
 				if (o == null)
 					continue;
 				if (!o.getType().isPenetrable()) {

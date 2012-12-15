@@ -75,16 +75,13 @@ public class IntroState extends State {
 	}
 
 	@Override
-	public StateType handleInput() {
+	public void handleInput() {
 		checkKeyStates();
 		if (Keyboard.isKeyDown(Keyboard.KEY_RETURN) && animationComplete && !keyDown) { // Animation is complete
-			MainMenuState.setKeyDown(true);
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("Switching to MainMenu state.");
-			MainMenuState.initialize(true);
-			return StateType.MAIN_MENU;
+			ChristmasCrashers.setCurrentState(StateType.MAIN_MENU);
 		}
-		return StateType.INTRO;
 	}
 
 	@Override
@@ -107,7 +104,7 @@ public class IntroState extends State {
 	/**
 	 * Begins the loading animation and executes the game-loader thread.
 	 */
-	public static void initialize() {
+	public void initialize() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing Intro state.");
 		animationComplete = false;
@@ -117,7 +114,7 @@ public class IntroState extends State {
 	/**
 	 * @return The state of the {@link #animationComplete} flag
 	 */
-	public static boolean isAnimationComplete() {
+	public boolean isAnimationComplete() {
 		return animationComplete;
 	}
 
@@ -125,7 +122,7 @@ public class IntroState extends State {
 	 * Sets the {@link #animationComplete} flag to the provided value.
 	 * @param complete
 	 */
-	public static void setAnimationComplete(boolean complete) {
+	public void setAnimationComplete(boolean complete) {
 		animationComplete = complete;
 	}
 }

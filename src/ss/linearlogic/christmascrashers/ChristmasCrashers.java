@@ -4,6 +4,7 @@ import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 
+import java.util.HashMap;
 import java.util.Scanner;
 
 import org.lwjgl.LWJGLException;
@@ -13,9 +14,9 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
 import ss.linearlogic.christmascrashers.engine.GLGuru;
-import ss.linearlogic.christmascrashers.engine.RenderMonkey;
 import ss.linearlogic.christmascrashers.state.GameState;
 import ss.linearlogic.christmascrashers.state.IntroState;
+import ss.linearlogic.christmascrashers.state.LevelEditorState;
 import ss.linearlogic.christmascrashers.state.MainMenuState;
 import ss.linearlogic.christmascrashers.state.State;
 import ss.linearlogic.christmascrashers.state.StateType;
@@ -25,14 +26,14 @@ import ss.linearlogic.christmascrashers.util.TextureMonkey;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.4.1
+ * @version 0.4.2
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.4.1";
+	public static final String VERSION = "0.4.2";
 
 	/**
 	 * Indicates whether the program is running in debug mode
@@ -50,25 +51,15 @@ public class ChristmasCrashers {
 	private static int windowHeight;
 
 	/**
-	 * Current game state flag - determines which state is handled in the input/logic/rendering loop.
-	 * It is initialized to the introduction state, and is updated with each pass through the game loop.
+	 * A HashMap containing {@link StateType} and {@link State} subclass pairs, used to set the current state in
+	 * the {@link #setCurrentState} method.
 	 */
-	private static StateType state;
+	private static HashMap<StateType, State> states = new HashMap<StateType, State>();
 
 	/**
-	 * IntroState object, initialized in the {@link #loadStates()} method.
+	 * The game state that is currently active and is handled and rendered in the main game loop
 	 */
-	private State introState;
-
-	/**
-	 * MainMenuState object, initialized in the {@link #loadStates()} method.
-	 */
-	private State mainMenuState;
-
-	/**
-	 * GameState object, initialized in the {@link #loadStates()} method.
-	 */
-	private State gameState;
+	private static State currentState;
 
 	/**
 	 * Set to 'true' in the {@link #ChristmasCrashers(int, int) contructor}, this boolean variable will cause
@@ -102,19 +93,21 @@ public class ChristmasCrashers {
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
 		GLGuru.initGL2D(windowWidth, windowHeight);
-		state = StateType.INTRO;
 		loadStates();
 		initTimer();
 		running = true;
 		reload = false;
-		IntroState.initialize();
 		TextureMonkey.init();
+		currentState = states.get(StateType.INTRO);
+		currentState.initialize();
 
 		// Logic/rendering loop
 		while(running) {
 			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Covers 2D and 3D
 
-			handleState(); // This calls the input handling, logic execution, and rendering for the current state
+			currentState.handleInput();
+			currentState.logic();
+			currentState.draw();
 
 			Display.update();
 			Display.sync(60); // Framerate = 60 fps
@@ -159,9 +152,10 @@ public class ChristmasCrashers {
 	private void loadStates() {
 		if (debugModeEnabled)
 			System.out.println("Loading game states.");
-		introState = new IntroState();
-		mainMenuState = new MainMenuState();
-		gameState = new GameState();
+		states.put(StateType.INTRO, new IntroState());
+		states.put(StateType.MAIN_MENU, new MainMenuState());
+		states.put(StateType.GAME, new GameState());
+		states.put(StateType.LEVEL_EDITOR, new LevelEditorState());
 	}
 
 	/**
@@ -169,35 +163,6 @@ public class ChristmasCrashers {
 	 */
 	private void initTimer() {
 		lastFrame = getTime();
-	}
-
-	/**
-	 * Calls the handleInput(), draw(), and render() methods in the state class determined by the {@link #state} flag.
-	 */
-	private void handleState() {
-		switch(state) {
-			case INTRO:
-				state = introState.handleInput();
-				introState.logic();
-				introState.draw();
-				break;
-			case MAIN_MENU:
-				state = mainMenuState.handleInput();
-				mainMenuState.logic();
-				mainMenuState.draw();
-				break;
-			case GAME:
-				RenderMonkey.renderBackground(0.3, 0.4, 1.0);
-				state = gameState.handleInput();
-				gameState.logic();
-				gameState.draw();
-				break;
-			case LEVEL_EDITOR:
-				RenderMonkey.renderBackground(0.3, 0.4, 1.0);
-			case WINDOW:
-				// This guy's a bit more complex...
-				break;
-		}
 	}
 
 	/**
@@ -221,13 +186,6 @@ public class ChristmasCrashers {
 	}
 
 	/**
-	 * @return The current {@link #state game state flag}
-	 */
-	public static StateType getState() {
-		return state;
-	}
-
-	/**
 	 * @return The {@link #windowWidth width} of the game window
 	 */
 	public static int getWindowWidth() {
@@ -246,6 +204,24 @@ public class ChristmasCrashers {
 	 */
 	public static boolean isDebugModeEnabled() {
 		return debugModeEnabled;
+	}
+
+	/**
+	 * @param type
+	 * @return The {@link State} subclass paired with the specified {@link StateType} in the {@link #states} HashMap
+	 */
+	public static State getState(StateType type) {
+		return states.get(type);
+	}
+	/**
+	 * Sets the {@link #currentState} to the {@link State} subclass that corresponds with the specified {@link StateType}.
+	 * 
+	 * @param type
+	 */
+	public static void setCurrentState(StateType type) {
+		currentState = states.get(type);
+		currentState.setKeyDown(true);
+		currentState.initialize();
 	}
 
 	/**

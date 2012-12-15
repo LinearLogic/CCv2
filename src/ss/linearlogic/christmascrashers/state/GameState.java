@@ -6,9 +6,9 @@ import org.lwjgl.input.Keyboard;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.engine.GLGuru;
+import ss.linearlogic.christmascrashers.engine.RenderMonkey;
 import ss.linearlogic.christmascrashers.entity.Player;
 import ss.linearlogic.christmascrashers.world.Level;
-import ss.linearlogic.christmascrashers.world.WorldManager;
 
 /**
  * The game state is where most of the user's time is spent, and includes handling of all relevant forms
@@ -22,12 +22,12 @@ public class GameState extends State {
 	/**
 	 * The {@link Level} to move the player around and render
 	 */
-	private static Level currentLevel;
+	private Level currentLevel;
 
 	/**
 	 * The {@link Player} object controlled by input from this client
 	 */
-	private static Player mainPlayer;
+	private Player mainPlayer;
 
 	/**
 	 * Constructor - adds the {@link #importantKeys}
@@ -40,15 +40,15 @@ public class GameState extends State {
 	}
 
 	@Override
-	public StateType handleInput() {
+	public void handleInput() {
 		// Adjust player's speed accordingly
 		checkKeyStates();
 		if (Keyboard.isKeyDown(Keyboard.KEY_ESCAPE) && !keyDown) {
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.out.println("Switching to MainMenu state.");
-			MainMenuState.setKeyDown(true);
-			MainMenuState.initialize(false); // Skip the fade-in animation
-			return StateType.MAIN_MENU;
+			ChristmasCrashers.setCurrentState(StateType.MAIN_MENU);
+			((MainMenuState) ChristmasCrashers.getState(StateType.MAIN_MENU)).setAnimationProgress(1000); // Skip the fade-in animation
+			return;
 		}
 
 		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
@@ -72,7 +72,6 @@ public class GameState extends State {
 		
 		GLGuru.setXDisplacement(mainPlayer.getPixelX() + (mainPlayer.getSprite().getWidth() - ChristmasCrashers.getWindowWidth()) / 2);
 		GLGuru.setYDisplacement(mainPlayer.getPixelY() + (mainPlayer.getSprite().getHeight() - ChristmasCrashers.getWindowHeight()) / 2);
-		return StateType.GAME;
 	}
 
 	@Override
@@ -82,33 +81,46 @@ public class GameState extends State {
 
 	@Override
 	public void draw() {
-		if (currentLevel != null)
+		RenderMonkey.renderBackground(0.3, 0.4, 1.0);
+		if (currentLevel != null) {
 			currentLevel.draw();
+		}
 		mainPlayer.draw();
 	}
 
 	/**
 	 * Sets the gamestate to active
 	 */
-	public static void initialize() {
+	public void initialize() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing Game state");
-		currentLevel = WorldManager.getWorld(0).getLevel(0);
 		mainPlayer = new Player(5, 1); // Initialize the user's player
 		int xOffset = (int) (mainPlayer.getPixelX() + (mainPlayer.getSprite().getWidth() - ChristmasCrashers.getWindowWidth()) / 2);
 		int yOffset = (int) (mainPlayer.getPixelY() + (mainPlayer.getSprite().getHeight() - ChristmasCrashers.getWindowHeight()) / 2);
-		System.out.println(GLGuru.getXDisplacement());
+		System.out.println(GLGuru.getZDisplacement());
 		glTranslated(GLGuru.getXDisplacement() - xOffset, GLGuru.getYDisplacement() - yOffset, -GLGuru.getZDisplacement()); // Reset the camera displacement
 
 		GLGuru.setXDisplacement(0);
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
+		GLGuru.initGL2D();
+
+		System.out.println(mainPlayer.getPixelX());
 	}
 
 	/**
-	 * @return The {@link #currentLevel}
+	 * @return The {@link #currentLevel} being played
 	 */
-	public static Level getCurrentLevel() {
+	public Level getCurrentLevel() {
 		return currentLevel;
+	}
+
+	/**
+	 * Sets the {@link #currentLevel} to the specified {@link Level} object
+	 * 
+	 * @param level
+	 */
+	public void setCurrentLevel(Level level) {
+		currentLevel = level;
 	}
 }

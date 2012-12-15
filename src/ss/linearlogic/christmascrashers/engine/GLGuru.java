@@ -58,7 +58,7 @@ public class GLGuru {
 	public static void initGL2D(int width, int height) {
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(xDisplacement, xDisplacement + width, yDisplacement, yDisplacement + height, zDisplacement + 1, zDisplacement - 1);
+		glOrtho(xDisplacement, xDisplacement + width, yDisplacement, yDisplacement + height, -zDisplacement + 1, -zDisplacement - 1);
 		glMatrixMode(GL_MODELVIEW);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

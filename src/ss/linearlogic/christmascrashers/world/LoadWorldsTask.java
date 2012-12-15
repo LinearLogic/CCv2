@@ -2,6 +2,7 @@ package ss.linearlogic.christmascrashers.world;
 
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.state.IntroState;
+import ss.linearlogic.christmascrashers.state.StateType;
 
 /**
  * Starts a new thread and loads World objects from files in the ..files/worlds directory branch.
@@ -30,8 +31,7 @@ public class LoadWorldsTask implements Runnable {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		if (!IntroState.isAnimationComplete())
-			IntroState.setAnimationComplete(true); // Move on from the loading screen splash
+		((IntroState) ChristmasCrashers.getState(StateType.INTRO)).setAnimationComplete(true); // Move on from the loading screen splash
 	}
 
 	/**

@@ -18,6 +18,7 @@ import org.newdawn.slick.util.ResourceLoader;
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.engine.GLGuru;
 import ss.linearlogic.christmascrashers.engine.RenderMonkey;
+import ss.linearlogic.christmascrashers.world.WorldManager;
 
 
 /**
@@ -43,7 +44,7 @@ public class MainMenuState extends State {
 	 * The {@link #points} in the starfield, which represent stars. When a point moves behind the camera,
 	 * it is replaced with a new point inside the camera's current view, to provide infinite zooming.
 	 */
-	private static Point[] points = new Point[1000];
+	private Point[] points = new Point[1000];
 
 	/**
 	 * How long the animation that fades in the starfield animation and option buttons should take, in milliseconds.
@@ -53,13 +54,13 @@ public class MainMenuState extends State {
 	/**
 	 * The current progress through the fade-in animation (this value starts at 0 and increments until it reaches 1000).
 	 */
-	private static double animationProgress;
+	private double animationProgress;
 
 	/**
 	 * The {@link NavigationButton} currently selected by the mouse (NONE if the mouse isn't hovering over one of
 	 * the navigation buttons)
 	 */
-	private static NavigationButton selectedButton;
+	private NavigationButton selectedButton;
 
 	/**
 	 * The font used in the MainMenu screen (for the version, etc.)
@@ -94,7 +95,7 @@ public class MainMenuState extends State {
 	}
 
 	@Override
-	public StateType handleInput() {
+	public void handleInput() {
 		checkKeyStates();
 		// Determine the currently selected navigation button
 		int x = Mouse.getX();
@@ -108,15 +109,15 @@ public class MainMenuState extends State {
 		else
 			selectedButton = NavigationButton.NONE;
 
-		if (Mouse.isButtonDown(0) && !keyDown && (animationProgress >= 1000)) {// Left click
+		if (Mouse.isButtonDown(0) && !keyDown && (animationProgress >= 1000)) { // Left click
 			keyDown = true;
 			switch(selectedButton) {
 				case START_GAME:
 					if (ChristmasCrashers.isDebugModeEnabled())
 						System.out.println("Switching to Game state.");
-					GameState.setKeyDown(true);
-					GameState.initialize();
-					return StateType.GAME;
+					((GameState) ChristmasCrashers.getState(StateType.GAME)).setCurrentLevel(WorldManager.getWorld(0).getLevel(0));
+					ChristmasCrashers.setCurrentState(StateType.GAME);
+					break;
 				case LEVEL_EDITOR:
 					System.out.println("COMING SOON!");
 					break;
@@ -128,7 +129,6 @@ public class MainMenuState extends State {
 					break;
 			}
 		}
-		return StateType.MAIN_MENU;
 	}
 
 	@Override
@@ -155,15 +155,7 @@ public class MainMenuState extends State {
 	        glEnd();
 
 	        // Switch back to 2D mode using a glOrtho call adjusted based on the current zoomDistance
-	        glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glOrtho(0, ChristmasCrashers.getWindowWidth(), 0, ChristmasCrashers.getWindowHeight(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
-			glMatrixMode(GL_MODELVIEW);
-			glEnable(GL_BLEND);
-			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			glDisable(GL_DEPTH_TEST);
-			glShadeModel(GL_SMOOTH);
-			glClearDepth(1);
+	        GLGuru.initGL2D();
 
 			// Load fade-in animation components
 			if (animationProgress < 1000) {
@@ -222,12 +214,23 @@ public class MainMenuState extends State {
 	}
 
 	/**
-	 * Populates the {@link #points} array to begin the starfield animation, and starts the fade-in animation
-	 * if the runFadeInAnimation flag is 'true'.
+	 * Setst the current {@link #animationProgress} to the specified integer value (must be between 0 and 1000, inclusive).
 	 * 
-	 * @param runFadeInAnimation Whether to run the fade-in sequence or to skip to the clickable menu
+	 * @param progress
 	 */
-	public static void initialize(boolean runFadeInAnimation) {
+	public void setAnimationProgress(int progress) {
+		if (progress < 0)
+			progress = 0;
+		if (progress > 1000)
+			progress = 1000;
+		animationProgress = progress;
+	}
+
+	/**
+	 * Populates the {@link #points} array to begin the starfield animation, and sets the {@link #animationProgress}
+	 * to 0 to begin the fade-in animation.
+	 */
+	public void initialize() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing MainMenu state.");
 		selectedButton = NavigationButton.NONE;
@@ -239,8 +242,6 @@ public class MainMenuState extends State {
 		for (int i = 0; i < points.length; i++)
 			points[i] = new Point((random.nextFloat() - 0.5f) * 100f, (random.nextFloat() - 0.5f) * 100f, random.nextInt(200) - (300 + (float) GLGuru.getZDisplacement()));
 		animationProgress = 0;
-		if (!runFadeInAnimation)
-			animationProgress = 1000; // Skip the fade-in animation entirely
 	}
 
 	/**
@@ -249,7 +250,7 @@ public class MainMenuState extends State {
 	 * @author LinearLogic
 	 * @since 0.1.1
 	 */
-	private static class Point {
+	private class Point {
 
 		/**
 		 * The x-coordinate of the point in the 3D animation frame
@@ -288,6 +289,7 @@ public class MainMenuState extends State {
 	 * @since 0.1.3
 	 */
 	private enum NavigationButton {
+
 		START_GAME(ChristmasCrashers.getWindowWidth() / 2 - 170, ChristmasCrashers.getWindowHeight() / 2 + 45, 180, 50, textures.get(2)),
 		LEVEL_EDITOR(ChristmasCrashers.getWindowWidth() / 2 - 90, ChristmasCrashers.getWindowHeight() / 2 - 25, 180, 50, textures.get(1)),
 		EXIT(ChristmasCrashers.getWindowWidth() / 2 - 10, ChristmasCrashers.getWindowHeight() / 2 - 95, 180, 50, textures.get(0)),
