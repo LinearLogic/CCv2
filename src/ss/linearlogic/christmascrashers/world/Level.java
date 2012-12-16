@@ -216,6 +216,7 @@ public class Level {
 		if (x < 0 || x >= WIDTH || y < 0 || y >= HEIGHT) {
 			if (ChristmasCrashers.isDebugModeEnabled())
 				System.err.println("Failed to retrieve the object at the tile location (" + x + ", " + y + ") - index out of bounds.\nThe x value must be between 0 and " + (WIDTH - 1) + ", and the height value must be between 0 and " + (HEIGHT - 1) + ", inclusive.");
+			return null;
 		}
 		return objects[x][y];
 	}

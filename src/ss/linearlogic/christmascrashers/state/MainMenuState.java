@@ -115,11 +115,14 @@ public class MainMenuState extends State {
 				case START_GAME:
 					if (ChristmasCrashers.isDebugModeEnabled())
 						System.out.println("Switching to Game state.");
-					((GameState) ChristmasCrashers.getState(StateType.GAME)).setCurrentLevel(WorldManager.getWorld(0).getLevel(0));
+					((GameState) ChristmasCrashers.getState(StateType.GAME)).setCurrentLevel(WorldManager.getWorld(0).getLevel(0)); // TODO replace this with the world selected in the world choice menu (not yet implemented)
 					ChristmasCrashers.setCurrentState(StateType.GAME);
 					break;
 				case LEVEL_EDITOR:
-					System.out.println("COMING SOON!");
+					if (ChristmasCrashers.isDebugModeEnabled())
+						System.out.println("Switching to LevelEditor state.");
+					((LevelEditorState) ChristmasCrashers.getState(StateType.LEVEL_EDITOR)).setCurrentWorld(WorldManager.getWorld(0));
+					ChristmasCrashers.setCurrentState(StateType.LEVEL_EDITOR);
 					break;
 				case EXIT:
 					ChristmasCrashers.exitGameLoop();
