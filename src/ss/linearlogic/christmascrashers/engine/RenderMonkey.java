@@ -239,12 +239,12 @@ public class RenderMonkey {
 		TextureImpl.bindNone();
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(GLGuru.getXDisplacement(), GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth(), ChristmasCrashers.getWindowHeight() - GLGuru.getYDisplacement(), -GLGuru.getYDisplacement(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
+		glOrtho(-GLGuru.getXDisplacement(), ChristmasCrashers.getWindowWidth() - GLGuru.getXDisplacement(), ChristmasCrashers.getWindowHeight() - GLGuru.getYDisplacement(), -GLGuru.getYDisplacement(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
 		glMatrixMode(GL_MODELVIEW);
 		font.drawString((int) x, (int) (ChristmasCrashers.getWindowHeight() - y - font.getHeight()), message, color);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(GLGuru.getXDisplacement(), GLGuru.getXDisplacement() + ChristmasCrashers.getWindowWidth(), GLGuru.getYDisplacement(), GLGuru.getYDisplacement() + ChristmasCrashers.getWindowHeight(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
+		glOrtho(0, ChristmasCrashers.getWindowWidth(), 0, ChristmasCrashers.getWindowHeight(), -GLGuru.getZDisplacement() + 1, -GLGuru.getZDisplacement() - 1);
 		glMatrixMode(GL_MODELVIEW);
 	}
 
@@ -264,7 +264,7 @@ public class RenderMonkey {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		Font baseFont = startFont.deriveFont(Font.PLAIN, fontSize);
-		return new TrueTypeFont(baseFont, false); // The boolean determines whether to anti-alias
+		Font baseFont = startFont.deriveFont(Font.BOLD, fontSize);
+		return new TrueTypeFont(baseFont, true); // The boolean determines whether to anti-alias
 	}
 }

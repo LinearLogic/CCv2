@@ -117,7 +117,7 @@ public enum ObjectType {
 	 * @return The texture of the object's tile
 	 */
 	public Texture getTexture() {
-		return TextureMonkey.getTexture(dataChar);
+		return TextureMonkey.getGameTexture(dataChar);
 	}
 
 	/**

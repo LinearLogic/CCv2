@@ -121,7 +121,6 @@ public class MainMenuState extends State {
 				case LEVEL_EDITOR:
 					if (ChristmasCrashers.isDebugModeEnabled())
 						System.out.println("Switching to LevelEditor state.");
-					((LevelEditorState) ChristmasCrashers.getState(StateType.LEVEL_EDITOR)).setCurrentWorld(WorldManager.getWorld(0));
 					ChristmasCrashers.setCurrentState(StateType.LEVEL_EDITOR);
 					break;
 				case EXIT:
