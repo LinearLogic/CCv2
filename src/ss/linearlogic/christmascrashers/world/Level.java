@@ -131,8 +131,6 @@ public class Level {
 				if (i >= dataLine.length())
 					break;
 				ObjectType type = ObjectType.getTypeFromDataChar(dataLine.charAt(i));
-				if (type.equals(ObjectType.AIR))
-					continue;
 				objects[i][j] = new Object(this, i, j, type);
 			}
 		}

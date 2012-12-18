@@ -9,6 +9,7 @@ import ss.linearlogic.christmascrashers.engine.GLGuru;
 import ss.linearlogic.christmascrashers.engine.RenderMonkey;
 import ss.linearlogic.christmascrashers.entity.Player;
 import ss.linearlogic.christmascrashers.world.Level;
+import ss.linearlogic.christmascrashers.world.World;
 
 /**
  * The game state is where most of the user's time is spent, and includes handling of all relevant forms
@@ -25,6 +26,11 @@ public class GameState extends State {
 	private Level currentLevel;
 
 	/**
+	 * The game world the player is currently in
+	 */
+	private World currentWorld;
+
+	/**
 	 * The {@link Player} object controlled by input from this client
 	 */
 	private Player mainPlayer;
@@ -34,9 +40,13 @@ public class GameState extends State {
 	 */
 	public GameState() {
 		importantKeys.add(Keyboard.KEY_RIGHT);
+		importantKeys.add(Keyboard.KEY_D);
 		importantKeys.add(Keyboard.KEY_LEFT);
+		importantKeys.add(Keyboard.KEY_A);
 		importantKeys.add(Keyboard.KEY_UP);
+		importantKeys.add(Keyboard.KEY_W);
 		importantKeys.add(Keyboard.KEY_ESCAPE);
+		importantKeys.add(Keyboard.KEY_S);
 	}
 
 	@Override
@@ -51,15 +61,15 @@ public class GameState extends State {
 			return;
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			keyDown = true;
 			mainPlayer.getMovementVector().setX(mainPlayer.getMovementVector().getX() + 5);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			keyDown = true;
 			mainPlayer.getMovementVector().setX(mainPlayer.getMovementVector().getX() - 5);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP) && !mainPlayer.canFly() && !mainPlayer.isAirborne()) {
+		if ((Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W)) && !mainPlayer.canFly() && !mainPlayer.isAirborne()) {
 			keyDown = true;
 			mainPlayer.setAirborne(true);
 			mainPlayer.getMovementVector().setY(mainPlayer.getMovementVector().getY() + 12.5f);
@@ -94,11 +104,14 @@ public class GameState extends State {
 	public void initialize() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing Game state");
+		currentWorld.load();
+		for (int i = 0; i < 5; i++)
+			if (currentWorld.getLevel(i) != null)
+				currentLevel = currentWorld.getLevel(i);
 		mainPlayer = new Player(5, 1); // Initialize the user's player
 		int xOffset = (int) (mainPlayer.getPixelX() + (mainPlayer.getSprite().getWidth() - ChristmasCrashers.getWindowWidth()) / 2);
 		int yOffset = (int) (mainPlayer.getPixelY() + (mainPlayer.getSprite().getHeight() - ChristmasCrashers.getWindowHeight()) / 2);
 		glTranslated(GLGuru.getXDisplacement() - xOffset, GLGuru.getYDisplacement() - yOffset, -GLGuru.getZDisplacement()); // Reset the camera displacement
-
 		GLGuru.setXDisplacement(0);
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
@@ -119,5 +132,20 @@ public class GameState extends State {
 	 */
 	public void setCurrentLevel(Level level) {
 		currentLevel = level;
+	}
+
+	/**
+	 * @return The game world the player is currently in
+	 */
+	public World getCurrentWorld() {
+		return currentWorld;
+	}
+
+	/**
+	 * Sets the current game world to the specified {@link World} object
+	 * @param world
+	 */
+	public void setCurrentWorld(World world) {
+		this.currentWorld = world;
 	}
 }

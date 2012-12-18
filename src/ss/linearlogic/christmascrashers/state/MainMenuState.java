@@ -115,7 +115,7 @@ public class MainMenuState extends State {
 				case START_GAME:
 					if (ChristmasCrashers.isDebugModeEnabled())
 						System.out.println("Switching to Game state.");
-					((GameState) ChristmasCrashers.getState(StateType.GAME)).setCurrentLevel(WorldManager.getWorld(0).getLevel(0)); // TODO replace this with the world selected in the world choice menu (not yet implemented)
+					((GameState) ChristmasCrashers.getState(StateType.GAME)).setCurrentWorld(WorldManager.getWorld(0)); // TODO replace this with the world selected in the world choice menu (not yet implemented)
 					ChristmasCrashers.setCurrentState(StateType.GAME);
 					break;
 				case LEVEL_EDITOR:

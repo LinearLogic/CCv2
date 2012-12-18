@@ -14,6 +14,8 @@ import org.newdawn.slick.opengl.Texture;
 import ss.linearlogic.christmascrashers.ChristmasCrashers;
 import ss.linearlogic.christmascrashers.engine.GLGuru;
 import ss.linearlogic.christmascrashers.engine.RenderMonkey;
+import ss.linearlogic.christmascrashers.object.Object;
+import ss.linearlogic.christmascrashers.object.ObjectType;
 import ss.linearlogic.christmascrashers.util.TextureMonkey;
 import ss.linearlogic.christmascrashers.world.Level;
 import ss.linearlogic.christmascrashers.world.World;
@@ -47,8 +49,24 @@ public class LevelEditorState extends State {
 	 */
 	private Level currentLevel;
 
+	/**
+	 * The {@link ObjectType type} of {@link Object} that will be placed whenever a map tile is left-clicked
+	 */
+	private ObjectType currentObjectType;
+
+	/**
+	 * The in-game object currently highlighted by the mouse
+	 */
+	private Object highlightedObject;
+
+	/**
+	 * The {@link Button buttons} belonging to the level selection menu
+	 */
 	private Button[] levelSelectionButtons = {Button.LEVEL_ONE, Button.LEVEL_TWO, Button.LEVEL_THREE, Button.LEVEL_FOUR, Button.LEVEL_FIVE};
 
+	/**
+	 * The {@link Button buttons} belonging to the tile selection menu
+	 */
 	private Button[] objectSelectionButtons = {Button.OBJECT_STONE, Button.OBJECT_BRICK, Button.OBJECT_ICE, Button.OBJECT_SPIKES, Button.OBJECT_PORTAL, Button.OBJECT_KEY, Button.OBJECT_POTION, Button.OBJECT_PRESENT};
 
 //	private Button[] entityButtons; TODO
@@ -81,72 +99,102 @@ public class LevelEditorState extends State {
 	public LevelEditorState() {
 		font = RenderMonkey.loadFont("files" + File.separator + "FIXEDSYS500C.TTF", 24);
 		importantKeys.add(Keyboard.KEY_RIGHT);
+		importantKeys.add(Keyboard.KEY_D);
 		importantKeys.add(Keyboard.KEY_LEFT);
+		importantKeys.add(Keyboard.KEY_A);
 		importantKeys.add(Keyboard.KEY_UP);
+		importantKeys.add(Keyboard.KEY_W);
 		importantKeys.add(Keyboard.KEY_DOWN);
+		importantKeys.add(Keyboard.KEY_S);
 	}
 
 	@Override
 	public void handleInput() {
-		checkKeyStates();
 		// Mouse handling
+		highlightedButton = Button.NONE;
 		int x = Mouse.getX();
 		int y = Mouse.getY();
-		highlightedButton = Button.NONE;
-		for (Button button : Button.values()) {
-			if (button == Button.NONE)
-				continue;
-			if (button.isHighlighted(x, y)) {
-				highlightedButton = button;
-				break;
+		if (x >= 0 && x < ChristmasCrashers.getWindowWidth() - 140 && y >= 0 && y < ChristmasCrashers.getWindowHeight() - 60) { // Mouse is within the map view
+			if (currentLevel != null) {
+				int tileX = (int) Math.floor((GLGuru.getXDisplacement() + x) / 30);
+				int tileY = (int) Math.floor((GLGuru.getYDisplacement() + y) / 30);
+			// ArrayIndexOutOfBoundsException prevention
+				if (tileX >= 0 && tileX < Level.WIDTH && tileY >= 0 && tileY < Level.HEIGHT) {
+					highlightedObject = currentLevel.getObject(tileX, tileY);
+					if (Mouse.isButtonDown(0) && currentObjectType != null && currentObjectType != ObjectType.AIR) {
+						currentLevel.getObject(tileX, tileY).setType(currentObjectType);
+					}
+					if (Mouse.isButtonDown(1)) {
+						currentLevel.getObject(tileX, tileY).setType(ObjectType.AIR);
+						keyDown = true;
+					}
+				} else {
+					highlightedObject = null;
+				}
+			}
+		} else { // Mouse is in one of the sidebars
+			checkKeyStates();
+			for (Button button : Button.values()) {
+				if (button == Button.NONE)
+					continue;
+				if (button.isHighlighted(x, y)) {
+					highlightedButton = button;
+					break;
+				}
+			}
+			if (Mouse.isButtonDown(0) && !keyDown && highlightedButton != Button.NONE) {
+				keyDown = true;
+				if (highlightedButton == Button.SAVE_BUTTON) {
+					WorldManager.saveWorld(currentWorld.getID());
+					if (ChristmasCrashers.isDebugModeEnabled())
+						System.out.println("Saving changes and switching to MainMenu state.");
+					ChristmasCrashers.setCurrentState(StateType.MAIN_MENU);
+					((MainMenuState) ChristmasCrashers.getState(StateType.MAIN_MENU)).setAnimationProgress(1000); // Skip the fade-in animation
+					return;
+				}
+				if (highlightedButton == Button.CANCEL_BUTTON) {
+					// TODO: open confirmation prompt
+					if (ChristmasCrashers.isDebugModeEnabled())
+						System.out.println("Discarding changes and switching to MainMenu state.");
+					ChristmasCrashers.setCurrentState(StateType.MAIN_MENU);
+					((MainMenuState) ChristmasCrashers.getState(StateType.MAIN_MENU)).setAnimationProgress(1000); // Skip the fade-in animation
+					return;
+				}
+				if (highlightedButton.texture == null) { // A level selection button is highlighted
+					selectedLevelButton = highlightedButton;
+					currentLevel = currentWorld.getLevel(Integer.parseInt(Character.toString(selectedLevelButton.metadata)));
+					if (ChristmasCrashers.isDebugModeEnabled() && currentLevel != null)
+						System.out.println("Now editing level " + currentLevel.getID() + " in world " + currentWorld.getID() + ".");
+					return;
+				} else {
+					System.out.println("!");
+					selectedTileButton = highlightedButton;
+					if (Integer.parseInt(Character.toString(selectedTileButton.metadata)) < 10 /* Increment this as necessary*/) // Object is selected
+						currentObjectType = ObjectType.getTypeFromDataChar(selectedTileButton.metadata);
+					// else // Entity is selected
+				}
 			}
 		}
-		if (Mouse.isButtonDown(0) && !keyDown && highlightedButton != Button.NONE) {
-			keyDown = true;
-			if (highlightedButton == Button.SAVE_BUTTON) {
-				WorldManager.saveWorld(currentWorld.getID());
-				if (ChristmasCrashers.isDebugModeEnabled())
-					System.out.println("Saving changes and switching to MainMenu state.");
-				ChristmasCrashers.setCurrentState(StateType.MAIN_MENU);
-				((MainMenuState) ChristmasCrashers.getState(StateType.MAIN_MENU)).setAnimationProgress(1000); // Skip the fade-in animation
-				return;
-			}
-			if (highlightedButton == Button.CANCEL_BUTTON) {
-				// TODO: open confirmation prompt
-				if (ChristmasCrashers.isDebugModeEnabled())
-					System.out.println("Discarding changes and switching to MainMenu state.");
-				ChristmasCrashers.setCurrentState(StateType.MAIN_MENU);
-				((MainMenuState) ChristmasCrashers.getState(StateType.MAIN_MENU)).setAnimationProgress(1000); // Skip the fade-in animation
-				return;
-			}
-			if (highlightedButton.texture == null) { // A level selection button is highlighted
-				selectedLevelButton = highlightedButton;
-				currentLevel = currentWorld.getLevel(Integer.parseInt(Character.toString(selectedLevelButton.metadata)));
-				if (ChristmasCrashers.isDebugModeEnabled() && currentLevel != null)
-					System.out.println("Now editing level " + currentLevel.getID() + " in world " + currentWorld.getID() + ".");
-				return;
-			} else {
-				selectedTileButton = highlightedButton;
-			}
-		}
+
+		// Keyboard handling
 		if (!keyDown)
 			ChristmasCrashers.getDelta(); // Clear the buildup in the delta count
 		Vector2f displacement = new Vector2f(0, 0);
 		int delta = ChristmasCrashers.getDelta();
 		// Panning speeds are in pixels per second
-		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_RIGHT) || Keyboard.isKeyDown(Keyboard.KEY_D)) {
 			keyDown = true;
 			displacement.setX(300 * (float) delta / 1000);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_LEFT) || Keyboard.isKeyDown(Keyboard.KEY_A)) {
 			keyDown = true;
 			displacement.setX(displacement.getX() - (300 * (float) delta / 1000));
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_UP)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_UP) || Keyboard.isKeyDown(Keyboard.KEY_W)) {
 			keyDown = true;
 			displacement.setY(300 * (float) delta / 1000);
 		}
-		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN)) {
+		if (Keyboard.isKeyDown(Keyboard.KEY_DOWN) || Keyboard.isKeyDown(Keyboard.KEY_S)) {
 			keyDown = true;
 			displacement.setY(displacement.getY() - (300 * (float) delta / 1000));
 		}
@@ -183,6 +231,8 @@ public class LevelEditorState extends State {
 				for (int j = bottomBound; j < topBound; j++)
 					if (currentLevel.getObject(i, j).getType().getTexture() != null)
 						RenderMonkey.renderTexturedRectangle(i * 30, j * 30, 30, 30, currentLevel.getObject(i, j).getType().getTexture());
+			if (highlightedObject != null)
+				RenderMonkey.renderTransparentColoredRectangle(highlightedObject.getX() * 30, highlightedObject.getY() * 30, 30, 30, 0.9, 0.9, 0.9, 0.4);
 		}
 		
 		// Draw the menu backgrounds
@@ -240,7 +290,7 @@ public class LevelEditorState extends State {
 	}
 
 	/**
-	 * Prepares the LevelEditor state to be set active. The {@link #currentWorld} is provided using the 
+	 * Prepares the LevelEditor state to be set active, initializing various attributes to their default states.
 	 */
 	public void initialize() {
 		glTranslated(GLGuru.getXDisplacement(), GLGuru.getYDisplacement(), -GLGuru.getZDisplacement()); // Reset the camera displacement
@@ -248,7 +298,10 @@ public class LevelEditorState extends State {
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
 		GLGuru.initGL2D();
+		currentLevel = null;
 		currentWorld = WorldManager.getWorld(0); // TODO: Set the currentWorld to the world selected in the main menu world window
+		currentWorld.load();
+		currentObjectType = ObjectType.AIR; 
 		selectedLevelButton = Button.NONE;
 		selectedTileButton = Button.NONE;
 		highlightedButton = Button.NONE;
@@ -347,7 +400,7 @@ public class LevelEditorState extends State {
 		/**
 		 * The string to be displayed in the info window when the button is highlighted (moused over)
 		 */
-		private final String info; // TODO: 
+		private final String info; // TODO: add info window
 
 		/**
 		 * Constructor - sets the button's dimensional attributes, texture, and info string to the supplied values.
