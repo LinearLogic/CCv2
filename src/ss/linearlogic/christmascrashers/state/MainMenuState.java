@@ -143,6 +143,7 @@ public class MainMenuState extends State {
 		if (points[0] != null) { // Only render things if the starfield animation has been initialized
 			// Switch into 3D mode (gluPerspective)
 			GLGuru.initGL3D();
+			glDisable(GL_TEXTURE_2D);
 			glColor3d(1, 1, 1);
 	        glTranslatef(0, 0, zoomSpeed);
 	        GLGuru.setZDisplacement(GLGuru.getZDisplacement() + zoomSpeed);
@@ -155,6 +156,7 @@ public class MainMenuState extends State {
 	        		glVertex3f(p.x, p.y, p.z);
 	        	}
 	        glEnd();
+			glEnable(GL_TEXTURE_2D);
 
 	        // Switch back to 2D mode using a glOrtho call adjusted based on the current zoomDistance
 	        GLGuru.initGL2D();

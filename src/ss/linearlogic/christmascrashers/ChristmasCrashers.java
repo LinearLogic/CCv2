@@ -26,14 +26,14 @@ import ss.linearlogic.christmascrashers.util.TextureMonkey;
  * Main class - contains the {@link #ChristmasCrashers(int, int) game object constructor} and {@link #main(String[]) program entry point}
  * 
  * @author LinearLogic
- * @version 0.4.4
+ * @version 0.4.5
  */
 public class ChristmasCrashers {
 
 	/**
 	 * The current version of the program
 	 */
-	public static final String VERSION = "0.4.4";
+	public static final String VERSION = "0.4.5";
 
 	/**
 	 * Indicates whether the program is running in debug mode
@@ -93,11 +93,11 @@ public class ChristmasCrashers {
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
 		GLGuru.initGL2D(windowWidth, windowHeight);
+		TextureMonkey.init(); // The TextureMonkey MUST be initialized before the game states to prevent NPEs during texture retrieval
 		loadStates();
 		initTimer();
 		running = true;
 		reload = false;
-		TextureMonkey.init();
 		currentState = states.get(StateType.INTRO);
 		currentState.initialize();
 

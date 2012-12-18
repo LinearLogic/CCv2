@@ -87,6 +87,7 @@ public class RenderMonkey {
 	 * @param transparency The transparency factor of the rectangle (0 = entirely transparent, 1 = entirely opaque)
 	 */
 	public static void renderTransparentLinedRectangle(double x, double y, double w, double h, double r, double g, double b, double transparency) {
+		glDisable(GL_TEXTURE_2D);
 		glColor4d(r, g, b, transparency);
 		glBegin(GL_LINE_LOOP);
 			glVertex2d(x, y); // Top left
@@ -94,6 +95,7 @@ public class RenderMonkey {
 			glVertex2d(x + w, y + h); // Bottom right
 			glVertex2d(x, y + h); // Bottom left
 		glEnd();
+		glEnable(GL_TEXTURE_2D);
 	}
 
 	/**
