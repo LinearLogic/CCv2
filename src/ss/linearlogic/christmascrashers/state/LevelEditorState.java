@@ -275,6 +275,11 @@ public class LevelEditorState extends State {
 
 		// Draw the level names (must be drawn last!)
 		RenderMonkey.renderString("Level 1  Level 2  Level 3  Level 4  Level 5", Button.LEVEL_ONE.x + 10, Button.LEVEL_ONE.y + 8, font, Color.black);
+
+		// Draw the info about the currently selected button, if any
+		if (highlightedButton != Button.NONE && highlightedButton.info != null) {
+			RenderMonkey.renderString(highlightedButton.info, (int) (730 - (font.getWidth(highlightedButton.info) / 2.0)), (int) (450 - (font.getHeight() / 2.0)), font, Color.black);
+		}
 	}
 
 	@Override
@@ -305,6 +310,7 @@ public class LevelEditorState extends State {
 		selectedLevelButton = Button.NONE;
 		selectedTileButton = Button.NONE;
 		highlightedButton = Button.NONE;
+		ChristmasCrashers.getDelta(); // Remove buildup in the delta count
 	}
 
 	/**
@@ -360,7 +366,7 @@ public class LevelEditorState extends State {
 		
 		// Window navigation buttons
 		SAVE_BUTTON(ChristmasCrashers.getWindowWidth() - 130, 10, 50, 50, '0',TextureMonkey.loadTexture("PNG", "files" + File.separator + "SaveIcon.PNG"), "Save"),
-		CANCEL_BUTTON(ChristmasCrashers.getWindowWidth() - 60, 10, 50, 50, '0', TextureMonkey.loadTexture("PNG", "files" + File.separator + "DeleteIcon.PNG"), "Delete"),
+		CANCEL_BUTTON(ChristmasCrashers.getWindowWidth() - 60, 10, 50, 50, '0', TextureMonkey.loadTexture("PNG", "files" + File.separator + "DeleteIcon.PNG"), "Cancel"),
 
 		NONE(0, 0, 0, 0, '0', null, null);
 

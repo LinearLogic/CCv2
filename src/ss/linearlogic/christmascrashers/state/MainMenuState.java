@@ -246,6 +246,7 @@ public class MainMenuState extends State {
 		for (int i = 0; i < points.length; i++)
 			points[i] = new Point((random.nextFloat() - 0.5f) * 100f, (random.nextFloat() - 0.5f) * 100f, random.nextInt(200) - (300 + (float) GLGuru.getZDisplacement()));
 		animationProgress = 0;
+		ChristmasCrashers.getDelta(); // Remove buildup in the delta count
 	}
 
 	/**

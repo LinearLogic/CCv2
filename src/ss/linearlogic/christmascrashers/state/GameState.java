@@ -104,11 +104,14 @@ public class GameState extends State {
 	public void initialize() {
 		if (ChristmasCrashers.isDebugModeEnabled())
 			System.out.println("Initializing Game state");
+		currentLevel = null;
 		currentWorld.load();
 		for (int i = 0; i < 5; i++)
-			if (currentWorld.getLevel(i) != null)
+			if (currentWorld.getLevel(i) != null) {
 				currentLevel = currentWorld.getLevel(i);
-		mainPlayer = new Player(5, 1); // Initialize the user's player
+				break;
+			}
+		mainPlayer = new Player(10, 5); // Initialize the user's player
 		int xOffset = (int) (mainPlayer.getPixelX() + (mainPlayer.getSprite().getWidth() - ChristmasCrashers.getWindowWidth()) / 2);
 		int yOffset = (int) (mainPlayer.getPixelY() + (mainPlayer.getSprite().getHeight() - ChristmasCrashers.getWindowHeight()) / 2);
 		glTranslated(GLGuru.getXDisplacement() - xOffset, GLGuru.getYDisplacement() - yOffset, -GLGuru.getZDisplacement()); // Reset the camera displacement
@@ -116,6 +119,7 @@ public class GameState extends State {
 		GLGuru.setYDisplacement(0);
 		GLGuru.setZDisplacement(0);
 		GLGuru.initGL2D();
+		ChristmasCrashers.getDelta(); // Remove buildup in the delta count
 	}
 
 	/**

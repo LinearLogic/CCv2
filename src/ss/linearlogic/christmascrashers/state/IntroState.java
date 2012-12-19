@@ -109,6 +109,7 @@ public class IntroState extends State {
 			System.out.println("Initializing Intro state.");
 		animationComplete = false;
 		WorldManager.loadWorlds();
+		ChristmasCrashers.getDelta(); // Remove buildup in the delta count
 	}
 
 	/**
